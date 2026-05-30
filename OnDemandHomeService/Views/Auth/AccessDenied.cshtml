@@ -1,0 +1,2310 @@
+﻿@* @{
+
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied — Security Violation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: rgba(15, 15, 25, 0.85);
+            --fg: #e8e8f0;
+            --muted: #5a5a72;
+            --accent: #ff2e2e;
+            --accent-glow: rgba(255, 46, 46, 0.4);
+            --amber: #ff8c00;
+            --amber-glow: rgba(255, 140, 0, 0.3);
+            --border: rgba(255, 46, 46, 0.15);
+            --card-border: rgba(255, 46, 46, 0.25);
+            --green: #00ff6a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* === BACKGROUND GRID === */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 46, 46, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 46, 46, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+            animation: gridShift 20s linear infinite;
+        }
+
+        @@keyframes gridShift {
+            0%
+
+        {
+            transform: translate(0, 0);
+        }
+
+        100% {
+            transform: translate(60px, 60px);
+        }
+
+        }
+
+        /* === SCAN LINE === */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            z-index: 1000;
+            opacity: 0.6;
+            animation: scanDown 3s ease-in-out infinite;
+            box-shadow: 0 0 30px var(--accent-glow), 0 0 80px var(--accent-glow);
+        }
+
+        @@keyframes scanDown {
+            0%
+
+        {
+            top: -10px;
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 0.6;
+        }
+
+        90% {
+            opacity: 0.6;
+        }
+
+        100% {
+            top: 100vh;
+            opacity: 0;
+        }
+
+        }
+
+        /* === FLOATING PARTICLES (Canvas behind) === */
+        #particles-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* === CORNER BRACKETS === */
+        .corner-bracket {
+            position: fixed;
+            width: 80px;
+            height: 80px;
+            z-index: 50;
+            opacity: 0.5;
+        }
+
+            .corner-bracket::before, .corner-bracket::after {
+                content: '';
+                position: absolute;
+                background: var(--accent);
+            }
+
+            .corner-bracket.tl {
+                top: 20px;
+                left: 20px;
+            }
+
+                .corner-bracket.tl::before {
+                    top: 0;
+                    left: 0;
+                    width: 30px;
+                    height: 2px;
+                }
+
+                .corner-bracket.tl::after {
+                    top: 0;
+                    left: 0;
+                    width: 2px;
+                    height: 30px;
+                }
+
+            .corner-bracket.tr {
+                top: 20px;
+                right: 20px;
+            }
+
+                .corner-bracket.tr::before {
+                    top: 0;
+                    right: 0;
+                    width: 30px;
+                    height: 2px;
+                }
+
+                .corner-bracket.tr::after {
+                    top: 0;
+                    right: 0;
+                    width: 2px;
+                    height: 30px;
+                }
+
+            .corner-bracket.bl {
+                bottom: 20px;
+                left: 20px;
+            }
+
+                .corner-bracket.bl::before {
+                    bottom: 0;
+                    left: 0;
+                    width: 30px;
+                    height: 2px;
+                }
+
+                .corner-bracket.bl::after {
+                    bottom: 0;
+                    left: 0;
+                    width: 2px;
+                    height: 30px;
+                }
+
+            .corner-bracket.br {
+                bottom: 20px;
+                right: 20px;
+            }
+
+                .corner-bracket.br::before {
+                    bottom: 0;
+                    right: 0;
+                    width: 30px;
+                    height: 2px;
+                }
+
+                .corner-bracket.br::after {
+                    bottom: 0;
+                    right: 0;
+                    width: 2px;
+                    height: 30px;
+                }
+
+        /* === MAIN CONTENT === */
+        .main-wrapper {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .denied-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* === TOP STATUS BAR === */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeSlideDown 0.6s 0.3s forwards;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulseDot 1.5s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        @@keyframes pulseDot {
+            0%, 100%
+
+        {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.4;
+            transform: scale(0.7);
+        }
+
+        }
+
+        /* === MAIN CARD === */
+        .denied-card {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+            padding: 3rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: cardAppear 0.8s 0.5s forwards;
+            backdrop-filter: blur(20px);
+        }
+
+            .denied-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, var(--accent), var(--amber), var(--accent), transparent);
+                animation: borderSlide 3s 1s linear infinite;
+            }
+
+            .denied-card::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                right: -100%;
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, var(--accent), var(--amber), var(--accent), transparent);
+                animation: borderSlideReverse 3s 1.5s linear infinite;
+            }
+
+        @@keyframes borderSlide {
+            0%
+
+        {
+            left: -100%;
+        }
+
+        100% {
+            left: 100%;
+        }
+
+        }
+        @@keyframes borderSlideReverse {
+            0%
+
+        {
+            right: -100%;
+        }
+
+        100% {
+            right: 100%;
+        }
+
+        }
+
+        @@keyframes cardAppear {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(30px) scale(0.97);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        }
+
+        @@keyframes fadeSlideDown {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(-15px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        /* === SHIELD ICON === */
+        .shield-container {
+            text-align: center;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: shieldAppear 1s 0.8s forwards;
+        }
+
+        .shield-icon {
+            font-size: 5rem;
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
+            animation: shieldPulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px var(--accent-glow)) drop-shadow(0 0 60px rgba(255, 46, 46, 0.15));
+        }
+
+            .shield-icon .ring {
+                position: absolute;
+                inset: -25px;
+                border: 2px solid var(--accent);
+                border-radius: 50%;
+                opacity: 0;
+                animation: ringExpand 2s ease-out infinite;
+            }
+
+                .shield-icon .ring:nth-child(2) {
+                    animation-delay: 0.6s;
+                }
+
+                .shield-icon .ring:nth-child(3) {
+                    animation-delay: 1.2s;
+                }
+
+        @@keyframes ringExpand {
+            0%
+
+        {
+            transform: scale(0.8);
+            opacity: 0.6;
+        }
+
+        100% {
+            transform: scale(2);
+            opacity: 0;
+        }
+
+        }
+
+        @@keyframes shieldPulse {
+            0%, 100%
+
+        {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        }
+
+        @@keyframes shieldAppear {
+            0%
+
+        {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        60% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        }
+
+        /* === GLITCH TITLE === */
+        .denied-title {
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            font-weight: 700;
+            color: var(--fg);
+            position: relative;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: titleAppear 0.5s 1.2s forwards;
+        }
+
+            .denied-title .glitch {
+                position: relative;
+                display: inline-block;
+            }
+
+                .denied-title .glitch::before,
+                .denied-title .glitch::after {
+                    content: attr(data-text);
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+
+                .denied-title .glitch::before {
+                    color: var(--accent);
+                    animation: glitch1 3s infinite;
+                    clip-path: inset(0 0 60% 0);
+                }
+
+                .denied-title .glitch::after {
+                    color: var(--amber);
+                    animation: glitch2 3s infinite;
+                    clip-path: inset(40% 0 0 0);
+                }
+
+        @@keyframes glitch1 {
+            0%, 90%, 100%
+
+        {
+            transform: translate(0);
+        }
+
+        92% {
+            transform: translate(-4px, -2px);
+        }
+
+        94% {
+            transform: translate(4px, 2px);
+        }
+
+        96% {
+            transform: translate(-2px, 1px);
+        }
+
+        98% {
+            transform: translate(2px, -1px);
+        }
+
+        }
+
+        @@keyframes glitch2 {
+            0%, 88%, 100%
+
+        {
+            transform: translate(0);
+        }
+
+        90% {
+            transform: translate(3px, 1px);
+        }
+
+        93% {
+            transform: translate(-3px, -1px);
+        }
+
+        96% {
+            transform: translate(2px, 2px);
+        }
+
+        }
+
+        @@keyframes titleAppear {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+            letter-spacing: 20px;
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+            letter-spacing: 4px;
+        }
+
+        }
+
+        /* === ERROR CODE === */
+        .error-code {
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            color: var(--accent);
+            letter-spacing: 6px;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeSlideDown 0.5s 1.5s forwards;
+        }
+
+        /* === WARNING MESSAGES === */
+        .warning-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+        }
+
+            .warning-list li {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.75rem;
+                padding: 0.65rem 1rem;
+                margin-bottom: 0.5rem;
+                border-left: 3px solid transparent;
+                font-size: 0.95rem;
+                color: var(--muted);
+                border-radius: 0 4px 4px 0;
+                opacity: 0;
+                transform: translateX(-20px);
+                transition: all 0.3s ease;
+            }
+
+                .warning-list li.visible {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+
+                .warning-list li:hover {
+                    background: rgba(255, 46, 46, 0.05);
+                    border-left-color: var(--accent);
+                    color: var(--fg);
+                }
+
+                .warning-list li i {
+                    color: var(--amber);
+                    font-size: 0.85rem;
+                    margin-top: 4px;
+                    flex-shrink: 0;
+                }
+
+                .warning-list li.danger i {
+                    color: var(--accent);
+                }
+
+                .warning-list li.danger:hover {
+                    border-left-color: var(--accent);
+                    background: rgba(255, 46, 46, 0.08);
+                }
+
+        /* === TERMINAL BOX === */
+        .terminal-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 46, 46, 0.12);
+            border-radius: 4px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.78rem;
+            line-height: 1.8;
+            color: var(--muted);
+            opacity: 0;
+            animation: cardAppear 0.6s 2.2s forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .terminal-box .terminal-header {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.8rem;
+                padding-bottom: 0.6rem;
+                border-bottom: 1px solid rgba(255, 46, 46, 0.08);
+            }
+
+                .terminal-box .terminal-header span {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                }
+
+                    .terminal-box .terminal-header span:nth-child(1) {
+                        background: var(--accent);
+                    }
+
+                    .terminal-box .terminal-header span:nth-child(2) {
+                        background: var(--amber);
+                    }
+
+                    .terminal-box .terminal-header span:nth-child(3) {
+                        background: var(--green);
+                    }
+
+                .terminal-box .terminal-header .title {
+                    margin-left: 0.5rem;
+                    font-size: 0.7rem;
+                    color: var(--muted);
+                    letter-spacing: 1px;
+                }
+
+        .terminal-line {
+            opacity: 0;
+        }
+
+            .terminal-line.typed {
+                opacity: 1;
+            }
+
+            .terminal-line .prompt {
+                color: var(--accent);
+            }
+
+            .terminal-line .cmd {
+                color: var(--fg);
+            }
+
+            .terminal-line .output {
+                color: var(--muted);
+            }
+
+            .terminal-line .error-text {
+                color: var(--accent);
+            }
+
+            .terminal-line .warn-text {
+                color: var(--amber);
+            }
+
+            .terminal-line .success-text {
+                color: var(--green);
+            }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 8px;
+            height: 14px;
+            background: var(--accent);
+            animation: blink 0.8s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        @@keyframes blink {
+            0%, 100%
+
+        {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        }
+
+        /* === SECURITY SCAN BAR === */
+        .scan-section {
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: cardAppear 0.6s 2.6s forwards;
+        }
+
+        .scan-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .scan-bar-outer {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 46, 46, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scan-bar-inner {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--amber));
+            border-radius: 2px;
+            position: relative;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+            .scan-bar-inner::after {
+                content: '';
+                position: absolute;
+                right: 0;
+                top: -3px;
+                width: 2px;
+                height: 10px;
+                background: white;
+                box-shadow: 0 0 8px white;
+            }
+
+        /* === ACTION BUTTONS === */
+        .actions-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeSlideDown 0.6s 3s forwards;
+        }
+
+        .btn-denied {
+            flex: 1;
+            min-width: 180px;
+            padding: 0.85rem 1.5rem;
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+            color: var(--fg);
+        }
+
+            .btn-denied::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(135deg, var(--accent), var(--amber));
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .btn-denied:hover::before {
+                opacity: 0.15;
+            }
+
+            .btn-denied:hover {
+                border-color: var(--accent);
+                box-shadow: 0 0 20px rgba(255, 46, 46, 0.15), inset 0 0 20px rgba(255, 46, 46, 0.05);
+                transform: translateY(-2px);
+            }
+
+            .btn-denied:active {
+                transform: translateY(0);
+            }
+
+            .btn-denied.primary {
+                background: linear-gradient(135deg, var(--accent), #cc1a1a);
+                border-color: var(--accent);
+                color: white;
+                box-shadow: 0 4px 20px var(--accent-glow);
+            }
+
+                .btn-denied.primary::before {
+                    background: linear-gradient(135deg, #ff5555, var(--amber));
+                }
+
+                .btn-denied.primary:hover {
+                    box-shadow: 0 6px 30px var(--accent-glow), 0 0 60px rgba(255, 46, 46, 0.1);
+                }
+
+            .btn-denied span, .btn-denied i {
+                position: relative;
+                z-index: 2;
+            }
+
+        /* === FOOTER INFO === */
+        .footer-info {
+            text-align: center;
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeSlideDown 0.6s 3.4s forwards;
+        }
+
+            .footer-info .meta {
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 0.7rem;
+                color: var(--muted);
+                letter-spacing: 2px;
+                line-height: 2;
+            }
+
+                .footer-info .meta .highlight {
+                    color: var(--accent);
+                }
+
+        /* === TOAST NOTIFICATION === */
+        .toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .toast-msg {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 0.85rem 1.2rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--fg);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transform: translateX(120%);
+            animation: toastIn 0.4s forwards;
+            max-width: 360px;
+        }
+
+            .toast-msg.leaving {
+                animation: toastOut 0.3s forwards;
+            }
+
+            .toast-msg i {
+                color: var(--accent);
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+
+        @@keyframes toastIn {
+            0%
+
+        {
+            transform: translateX(120%);
+            opacity: 0;
+        }
+
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        }
+
+        @@keyframes toastOut {
+            0%
+
+        {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateX(120%);
+            opacity: 0;
+        }
+
+        }
+
+        /* === COUNTDOWN === */
+        .countdown-section {
+            text-align: center;
+            margin-top: 1.5rem;
+            opacity: 0;
+            animation: fadeSlideDown 0.5s 3.6s forwards;
+        }
+
+        .countdown-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+
+        .countdown-number {
+            font-size: 1.4rem;
+            color: var(--accent);
+            font-weight: 700;
+            display: inline-block;
+            min-width: 1.5ch;
+            text-align: center;
+        }
+
+        /* === NOISE OVERLAY === */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+        }
+
+        /* === VIGNETTE === */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 998;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.6) 100%);
+        }
+
+        /* === RESPONSIVE === */
+        @@media (max-width: 640px) {
+            .denied-card
+
+        {
+            padding: 2rem 1.5rem;
+        }
+
+        .shield-icon {
+            font-size: 3.5rem;
+        }
+
+        .actions-row {
+            flex-direction: column;
+        }
+
+        .btn-denied {
+            min-width: 100%;
+        }
+
+        .corner-bracket {
+            width: 50px;
+            height: 50px;
+        }
+
+            .corner-bracket::before {
+                width: 20px !important;
+            }
+
+            .corner-bracket::after {
+                height: 20px !important;
+            }
+
+        }
+
+        /* === REDUCED MOTION === */
+        @@media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after
+
+        {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+
+        .scanline {
+            display: none;
+        }
+
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background layers -->
+    <div class="bg-grid"></div>
+    <canvas id="particles-canvas"></canvas>
+    <div class="noise-overlay"></div>
+    <div class="vignette"></div>
+    <div class="scanline"></div>
+
+    <!-- Corner brackets -->
+    <div class="corner-bracket tl"></div>
+    <div class="corner-bracket tr"></div>
+    <div class="corner-bracket bl"></div>
+    <div class="corner-bracket br"></div>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Main content -->
+    <main class="main-wrapper">
+        <div class="denied-container">
+
+            <!-- Status bar -->
+            <div class="status-bar">
+                <div class="status-dot"></div>
+                <span>Security Monitoring Active</span>
+                <span style="margin-left: auto;" id="liveTime"></span>
+            </div>
+
+            <!-- Main card -->
+            <div class="denied-card">
+
+                <!-- Shield icon -->
+                <div class="shield-container">
+                    <div class="shield-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <div class="ring"></div>
+                        <div class="ring"></div>
+                        <div class="ring"></div>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <h1 class="denied-title">
+                    <span class="glitch" data-text="ACCESS DENIED">ACCESS DENIED</span>
+                </h1>
+
+                <!-- Error code -->
+                <div class="error-code">ERROR 403 — FORBIDDEN</div>
+
+                <!-- Warning messages -->
+                <ul class="warning-list" id="warningList">
+                    <li class="danger">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>You do not have permission to access this resource.</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-lock"></i>
+                        <span>This area requires elevated security clearance.</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-user-slash"></i>
+                        <span>Your current role does not match the required access level.</span>
+                    </li>
+                    <li class="danger">
+                        <i class="fa-solid fa-fingerprint"></i>
+                        <span>Unauthorized access attempts are logged and monitored.</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>If you believe this is an error, contact your system administrator.</span>
+                    </li>
+                </ul>
+
+                <!-- Terminal -->
+                <div class="terminal-box">
+                    <div class="terminal-header">
+                        <span></span><span></span><span></span>
+                        <span class="title">SECURITY AUDIT LOG</span>
+                    </div>
+                    <div id="terminalContent">
+                        <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">verifying access token...</span></div>
+                        <div class="terminal-line"><span class="output">[CHECK] Token valid: </span><span class="success-text">TRUE</span></div>
+                        <div class="terminal-line"><span class="output">[CHECK] Permission level: </span><span class="error-text">INSUFFICIENT</span></div>
+                        <div class="terminal-line"><span class="output">[CHECK] Resource clearance: </span><span class="error-text">LEVEL-3 REQUIRED</span></div>
+                        <div class="terminal-line"><span class="output">[CHECK] User clearance: </span><span class="warn-text">LEVEL-1</span></div>
+                        <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">running threat assessment...</span></div>
+                        <div class="terminal-line"><span class="error-text">[ALERT] Access violation detected — Event #</span><span id="eventId">—</span></div>
+                        <div class="terminal-line"><span class="warn-text">[WARN] Incident has been recorded for review.</span></div>
+                        <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">connection terminated<span class="cursor-blink"></span></span></div>
+                    </div>
+                </div>
+
+                <!-- Security scan -->
+                <div class="scan-section">
+                    <div class="scan-label">
+                        <span><i class="fa-solid fa-radar" style="margin-right:6px;"></i>SECURITY SCAN</span>
+                        <span id="scanPercent">0%</span>
+                    </div>
+                    <div class="scan-bar-outer">
+                        <div class="scan-bar-inner" id="scanBar"></div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="actions-row">
+                    <button class="btn-denied primary" onclick="goBack()" aria-label="Go back to previous page">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Go Back</span>
+                    </button>
+                    <button class="btn-denied" onclick="goHome()" aria-label="Return to homepage">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Homepage</span>
+                    </button>
+                    <button class="btn-denied" onclick="contactAdmin()" aria-label="Contact administrator">
+                        <i class="fa-solid fa-headset"></i>
+                        <span>Contact Admin</span>
+                    </button>
+                </div>
+
+                <!-- Countdown -->
+                <div class="countdown-section">
+                    <span class="countdown-text">Auto-redirect in <span class="countdown-number" id="countdownNum">15</span> seconds</span>
+                </div>
+
+            </div>
+
+            <!-- Footer metadata -->
+            <div class="footer-info">
+                <div class="meta">
+                    REQUEST ID: <span class="highlight" id="reqId">—</span><br>
+                    TIMESTAMP: <span class="highlight" id="timestamp">—</span><br>
+                    CLIENT IP: <span class="highlight" id="clientIp">—</span><br>
+                    SECURITY PROTOCOL: <span class="highlight">AES-256-GCM / TLS 1.3</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        /* ==========================================
+           PARTICLE SYSTEM — floating warning particles
+        ========================================== */
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const PARTICLE_COUNT = 50;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.3 + 0.05;
+                this.isRed = Math.random() > 0.6;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < -10 || this.x > canvas.width + 10 || this.y < -10 || this.y > canvas.height + 10) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                if (this.isRed) {
+                    ctx.fillStyle = `rgba(255, 46, 46, ${this.opacity})`;
+                } else {
+                    ctx.fillStyle = `rgba(255, 140, 0, ${this.opacity * 0.6})`;
+                }
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw connection lines between nearby particles
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        const lineOpacity = (1 - dist / 150) * 0.06;
+                        ctx.strokeStyle = `rgba(255, 46, 46, ${lineOpacity})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        /* ==========================================
+           LIVE CLOCK
+        ========================================== */
+        function updateClock() {
+            const now = new Date();
+            const str = now.toLocaleTimeString('en-US', { hour12: false }) + '.' + String(now.getMilliseconds()).padStart(3, '0');
+            document.getElementById('liveTime').textContent = str;
+        }
+        setInterval(updateClock, 50);
+        updateClock();
+
+        /* ==========================================
+           METADATA
+        ========================================== */
+        function generateId(len) {
+            const chars = 'ABCDEF0123456789';
+            let id = '';
+            for (let i = 0; i < len; i++) id += chars[Math.floor(Math.random() * chars.length)];
+            return id;
+        }
+
+        document.getElementById('reqId').textContent = 'REQ-' + generateId(8);
+        document.getElementById('eventId').textContent = 'EVT-' + generateId(6);
+        document.getElementById('timestamp').textContent = new Date().toISOString();
+        // Simulated IP (never actual IP)
+        document.getElementById('clientIp').textContent = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
+
+        /* ==========================================
+           WARNING LIST STAGGERED REVEAL
+        ========================================== */
+        const warningItems = document.querySelectorAll('.warning-list li');
+        warningItems.forEach((item, i) => {
+            setTimeout(() => {
+                item.classList.add('visible');
+            }, 1600 + i * 150);
+        });
+
+        /* ==========================================
+           TERMINAL TYPING EFFECT
+        ========================================== */
+        const terminalLines = document.querySelectorAll('.terminal-line');
+        terminalLines.forEach((line, i) => {
+            setTimeout(() => {
+                line.classList.add('typed');
+            }, 2400 + i * 400);
+        });
+
+        /* ==========================================
+           SECURITY SCAN BAR
+        ========================================== */
+        let scanProgress = 0;
+        const scanBar = document.getElementById('scanBar');
+        const scanPercent = document.getElementById('scanPercent');
+        const scanInterval = setInterval(() => {
+            scanProgress += Math.random() * 3 + 0.5;
+            if (scanProgress >= 100) {
+                scanProgress = 100;
+                clearInterval(scanInterval);
+            }
+            scanBar.style.width = scanProgress + '%';
+            scanPercent.textContent = Math.floor(scanProgress) + '%';
+        }, 80);
+
+        /* ==========================================
+           COUNTDOWN
+        ========================================== */
+        let countdown = 15;
+        const countdownEl = document.getElementById('countdownNum');
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                countdownEl.textContent = '0';
+                showToast('fa-rotate', 'Redirecting to homepage...');
+                setTimeout(() => goHome(), 800);
+            } else {
+                countdownEl.textContent = countdown;
+            }
+        }, 1000);
+
+        /* ==========================================
+           TOAST SYSTEM
+        ========================================== */
+        function showToast(icon, message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast-msg';
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('leaving');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Initial warning toast
+        setTimeout(() => {
+            showToast('fa-shield-halved', 'Security violation has been logged.');
+        }, 4000);
+
+        setTimeout(() => {
+            showToast('fa-user-slash', 'Insufficient clearance for requested resource.');
+        }, 6000);
+
+        /* ==========================================
+           BUTTON ACTIONS
+        ========================================== */
+        function goBack() {
+            clearInterval(countdownInterval);
+            showToast('fa-arrow-left', 'Navigating to previous page...');
+            setTimeout(() => {
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    window.location.href = '/';
+                }
+            }, 600);
+        }
+
+        function goHome() {
+            clearInterval(countdownInterval);
+            showToast('fa-house', 'Redirecting to homepage...');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 600);
+        }
+
+        function contactAdmin() {
+            clearInterval(countdownInterval);
+            showToast('fa-headset', 'Opening administrator contact channel...');
+            // Simulate a modal-like inline response
+            setTimeout(() => {
+                showToast('fa-envelope', 'Admin notified: support@system.internal');
+            }, 1500);
+        }
+
+        /* ==========================================
+           KEYBOARD SHORTCUT
+        ========================================== */
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                goBack();
+            }
+            if (e.key === 'h' || e.key === 'H') {
+                goHome();
+            }
+        });
+    </script>
+</body>
+</html> *@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Access Denied";
+}
+
+@section Styles {
+    <style>
+        /* ===== HERO ===== */
+        .denied-hero {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            min-height: 580px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+            margin-top: -80px;
+            padding-top: 80px;
+            border-radius: 0 0 50px 0;
+        }
+
+            .denied-hero .hero-shape {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 150px;
+                background: #fff;
+                clip-path: polygon(0 100%, 100% 0, 100% 100%);
+            }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            pointer-events: none;
+            animation: floatParticle linear infinite;
+        }
+
+        @@keyframes floatParticle {
+            0%
+
+        {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(-600px) rotate(360deg);
+            opacity: 0;
+        }
+
+        }
+
+        /* Scan Line */
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            animation: scanDown 3.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @@keyframes scanDown {
+            0%
+
+        {
+            top: -4px;
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            top: 100%;
+            opacity: 0;
+        }
+
+        }
+
+        /* Grid Overlay */
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        /* ===== LOCK ICON ===== */
+        .lock-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 30px;
+            cursor: pointer;
+        }
+
+        .lock-ring {
+            position: absolute;
+            inset: -12px;
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 50%;
+            animation: spinRing 12s linear infinite;
+        }
+
+        @@keyframes spinRing {
+            to
+
+        {
+            transform: rotate(360deg);
+        }
+
+        }
+
+        .lock-ring-reverse {
+            position: absolute;
+            inset: -24px;
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: spinRing 18s linear infinite reverse;
+        }
+
+        .lock-icon-wrapper {
+            width: 160px;
+            height: 160px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.15);
+            position: relative;
+            z-index: 2;
+            animation: breathe 3s ease-in-out infinite;
+            transition: all 0.4s ease;
+        }
+
+        .lock-container:hover .lock-icon-wrapper {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.08);
+        }
+
+        .lock-container.shaking .lock-icon-wrapper {
+            animation: shakeLock 0.5s ease-in-out;
+        }
+
+        @@keyframes breathe {
+            0%, 100%
+
+        {
+            box-shadow: 0 0 30px rgba(78,115,223,0.3);
+        }
+
+        50% {
+            box-shadow: 0 0 60px rgba(78,115,223,0.6), 0 0 100px rgba(78,115,223,0.2);
+        }
+
+        }
+
+        @@keyframes shakeLock {
+            0%, 100%
+
+        {
+            transform: rotate(0deg);
+        }
+
+        15% {
+            transform: rotate(-12deg);
+        }
+
+        30% {
+            transform: rotate(10deg);
+        }
+
+        45% {
+            transform: rotate(-8deg);
+        }
+
+        60% {
+            transform: rotate(6deg);
+        }
+
+        75% {
+            transform: rotate(-3deg);
+        }
+
+        }
+
+        /* Pulse Rings */
+        .pulse-ring {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            animation: pulseOut 2.5s ease-out infinite;
+        }
+
+            .pulse-ring:nth-child(2) {
+                animation-delay: 0.8s;
+            }
+
+            .pulse-ring:nth-child(3) {
+                animation-delay: 1.6s;
+            }
+
+        @@keyframes pulseOut {
+            0%
+
+        {
+            transform: scale(1);
+            opacity: 0.6;
+        }
+
+        100% {
+            transform: scale(2.2);
+            opacity: 0;
+        }
+
+        }
+
+        /* ===== GLITCH TEXT ===== */
+        .glitch-text {
+            font-size: 3.5rem;
+            font-weight: 700;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+            .glitch-text::before,
+            .glitch-text::after {
+                content: attr(data-text);
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            .glitch-text::before {
+                color: #ff6b6b;
+                animation: glitch1 3s infinite linear alternate-reverse;
+                clip-path: inset(0 0 65% 0);
+            }
+
+            .glitch-text::after {
+                color: #6bfff1;
+                animation: glitch2 2.5s infinite linear alternate-reverse;
+                clip-path: inset(65% 0 0 0);
+            }
+
+        @@keyframes glitch1 {
+            0%
+
+        {
+            transform: translate(0);
+        }
+
+        20% {
+            transform: translate(-3px, 2px);
+        }
+
+        40% {
+            transform: translate(3px, -1px);
+        }
+
+        60% {
+            transform: translate(-2px, 1px);
+        }
+
+        80% {
+            transform: translate(2px, -2px);
+        }
+
+        100% {
+            transform: translate(0);
+        }
+
+        }
+
+        @@keyframes glitch2 {
+            0%
+
+        {
+            transform: translate(0);
+        }
+
+        25% {
+            transform: translate(2px, -2px);
+        }
+
+        50% {
+            transform: translate(-3px, 1px);
+        }
+
+        75% {
+            transform: translate(3px, 2px);
+        }
+
+        100% {
+            transform: translate(0);
+        }
+
+        }
+
+        .error-code {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 4px;
+            margin-top: 10px;
+        }
+
+        /* Typing effect */
+        .typing-text {
+            display: inline-block;
+            border-right: 2px solid rgba(255,255,255,0.7);
+            animation: blink 0.8s step-end infinite;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        @@keyframes blink {
+            50%
+
+        {
+            border-color: transparent;
+        }
+
+        }
+
+        /* ===== REASON CARDS ===== */
+        .reason-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 35px 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            height: 100%;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+            .reason-card.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .reason-card:hover {
+                transform: translateY(-10px) !important;
+                border-color: #4e73df;
+                box-shadow: 0 15px 30px rgba(78,115,223,0.1);
+            }
+
+        .reason-icon {
+            width: 80px;
+            height: 80px;
+            background: #f8f9fc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: #4e73df;
+            transition: all 0.3s;
+        }
+
+        .reason-card:hover .reason-icon {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: #fff;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .action-btn::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                background: rgba(255,255,255,0.2);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                transition: width 0.5s, height 0.5s;
+            }
+
+            .action-btn:active::after {
+                width: 300px;
+                height: 300px;
+            }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(78,115,223,0.35);
+        }
+
+            .btn-primary-action:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 35px rgba(78,115,223,0.5);
+                color: #fff;
+            }
+
+        .btn-secondary-action {
+            background: #fff;
+            color: #224abe;
+            border: 2px solid #4e73df;
+        }
+
+            .btn-secondary-action:hover {
+                background: #4e73df;
+                color: #fff;
+                transform: translateY(-3px);
+                box-shadow: 0 10px 30px rgba(78,115,223,0.3);
+            }
+
+        /* ===== TIMELINE STEPS ===== */
+        .step-connector {
+            position: relative;
+        }
+
+            .step-connector::before {
+                content: '';
+                position: absolute;
+                left: 32px;
+                top: 70px;
+                bottom: -20px;
+                width: 2px;
+                background: linear-gradient(to bottom, #4e73df, #e0e5f1);
+            }
+
+            .step-connector:last-child::before {
+                display: none;
+            }
+
+        .step-number {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 6px 20px rgba(78,115,223,0.3);
+            transition: all 0.3s;
+        }
+
+        .step-connector:hover .step-number {
+            transform: scale(1.12);
+            box-shadow: 0 8px 30px rgba(78,115,223,0.5);
+        }
+
+        /* ===== CTA BANNER ===== */
+        .cta-banner {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            border-radius: 20px;
+            padding: 60px 40px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .cta-banner::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -10%;
+                width: 300px;
+                height: 300px;
+                background: rgba(255,255,255,0.05);
+                border-radius: 50%;
+            }
+
+            .cta-banner::after {
+                content: '';
+                position: absolute;
+                bottom: -40%;
+                left: -5%;
+                width: 200px;
+                height: 200px;
+                background: rgba(255,255,255,0.04);
+                border-radius: 50%;
+            }
+
+        /* ===== RIPPLE CLICK EFFECT ===== */
+        .ripple-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            transform: scale(0);
+            animation: rippleAnim 0.6s linear;
+            pointer-events: none;
+        }
+
+        @@keyframes rippleAnim {
+            to
+
+        {
+            transform: scale(4);
+            opacity: 0;
+        }
+
+        }
+
+        /* ===== REDIRECT BAR ===== */
+        .redirect-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 20px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+            .redirect-bar.active {
+                opacity: 1;
+            }
+
+            .redirect-bar .bar-fill {
+                height: 100%;
+                background: #ffc107;
+                border-radius: 4px;
+                width: 0%;
+                transition: width 0.1s linear;
+            }
+
+        /* ===== RESPONSIVE ===== */
+        @@media (max-width: 768px) {
+            .glitch-text {
+                font-size: 2rem;
+                letter-spacing: 1px;
+            }
+
+            .lock-icon-wrapper {
+                width: 120px;
+                height: 120px;
+                font-size: 3rem;
+            }
+
+            .lock-container {
+                width: 120px;
+                height: 120px;
+            }
+
+            .denied-hero {
+                min-height: 500px;
+            }
+        }
+    </style>
+}
+
+<!-- ========================================= -->
+<!-- HERO SECTION -->
+<!-- ========================================= -->
+<section class="denied-hero" id="deniedHero">
+    <div class="grid-overlay"></div>
+    <div class="scan-line"></div>
+
+    <!-- Particles injected by JS -->
+    <div id="particleContainer"></div>
+
+    <div class="container position-relative" style="z-index:3;">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <!-- Animated Lock -->
+                <div class="lock-container" id="lockContainer" title="Click to shake!">
+                    <div class="lock-ring"></div>
+                    <div class="lock-ring-reverse"></div>
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                    <div class="lock-icon-wrapper" id="lockIcon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+
+                <!-- Glitch Text -->
+                <h1 class="glitch-text" data-text="Access Denied">Access Denied</h1>
+                <p class="error-code">ERROR 403 — FORBIDDEN</p>
+
+                <!-- Typing Subtitle -->
+                <p class="lead mt-3 mb-4">
+                    <span class="typing-text" id="typingText"></span>
+                </p>
+
+                <!-- Action Buttons -->
+                <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+                    <a asp-controller="Home" asp-action="Index"
+                       class="action-btn btn-primary-action ripple-container"
+                       id="btnGoHome">
+                        <i class="fas fa-home me-2"></i>Go Home
+                    </a>
+                    <button class="action-btn btn-secondary-action ripple-container"
+                            id="btnGoBack"
+                            onclick="history.back()">
+                        <i class="fas fa-arrow-left me-2"></i>Go Back
+                    </button>
+                </div>
+
+                <!-- Redirect Progress Bar -->
+                <div class="redirect-bar" id="redirectBar">
+                    <div class="bar-fill" id="barFill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-shape"></div>
+</section>
+
+<!-- ========================================= -->
+<!-- POSSIBLE REASONS -->
+<!-- ========================================= -->
+<section class="py-5" id="reasonsSection">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3">Why This Happened</span>
+            <h2 class="fw-bold">Possible Reasons</h2>
+            <p class="text-muted mt-2">Here are the most common causes for access denial</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="reason-card" data-delay="0">
+                    <div class="reason-icon"><i class="fas fa-user-lock"></i></div>
+                    <h6 class="fw-bold">Insufficient Permissions</h6>
+                    <p class="text-muted small">Your account role doesn't have the required privileges to view this resource.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="reason-card" data-delay="100">
+                    <div class="reason-icon"><i class="fas fa-key"></i></div>
+                    <h6 class="fw-bold">Authentication Expired</h6>
+                    <p class="text-muted small">Your login session may have timed out. Try signing in again to regain access.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="reason-card" data-delay="200">
+                    <div class="reason-icon"><i class="fas fa-ban"></i></div>
+                    <h6 class="fw-bold">Restricted Area</h6>
+                    <p class="text-muted small">This section is reserved for administrators and authorized personnel only.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="reason-card" data-delay="300">
+                    <div class="reason-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h6 class="fw-bold">Security Trigger</h6>
+                    <p class="text-muted small">Unusual activity was detected and access was blocked to protect your account.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- WHAT YOU CAN DO -->
+<!-- ========================================= -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5">
+                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3">Next Steps</span>
+                <h2 class="fw-bold mb-3">What You Can Do</h2>
+                <p class="text-muted">
+                    Don't worry — this is usually easy to fix. Follow the steps below
+                    to resolve the issue and get back on track.
+                </p>
+                <a asp-controller="Home" asp-action="Index"
+                   class="action-btn btn-primary-action ripple-container mt-3">
+                    <i class="fas fa-home me-2"></i>Return to Safety
+                </a>
+            </div>
+            <div class="col-lg-7">
+                <!-- Step 1 -->
+                <div class="d-flex align-items-start mb-4 step-connector">
+                    <div class="step-number me-4">1</div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Verify Your Login Status</h6>
+                        <p class="text-muted small mb-0">Make sure you're logged into the correct account with the right permissions. Check the top-right corner for your profile icon.</p>
+                    </div>
+                </div>
+                <!-- Step 2 -->
+                <div class="d-flex align-items-start mb-4 step-connector">
+                    <div class="step-number me-4">2</div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Request Access from Admin</h6>
+                        <p class="text-muted small mb-0">If you believe you should have access, contact your system administrator and request the appropriate role or permission level.</p>
+                    </div>
+                </div>
+                <!-- Step 3 -->
+                <div class="d-flex align-items-start mb-4 step-connector">
+                    <div class="step-number me-4">3</div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Clear Browser Cache</h6>
+                        <p class="text-muted small mb-0">Sometimes stale cookies or cached tokens cause authentication issues. Clear your browser data and try loading the page again.</p>
+                    </div>
+                </div>
+                <!-- Step 4 -->
+                <div class="d-flex align-items-start step-connector">
+                    <div class="step-number me-4">4</div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Contact Support</h6>
+                        <p class="text-muted small mb-0">If the problem persists, reach out to our support team with the error code <strong>403</strong> and we'll investigate right away.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- CTA BANNER -->
+<!-- ========================================= -->
+<section class="py-5">
+    <div class="container">
+        <div class="cta-banner text-center position-relative" style="z-index:1;">
+            <h2 class="fw-bold mb-3">Ready to Get Back In?</h2>
+            <p class="lead mb-4 opacity-75">Sign in with the correct account or contact your administrator for access.</p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a asp-controller="Account" asp-action="Login"
+                   class="action-btn ripple-container"
+                   style="background:#ffc107; color:#224abe; font-weight:700; box-shadow:0 8px 25px rgba(255,193,7,0.35);">
+                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                </a>
+                <a asp-controller="Home" asp-action="Index"
+                   class="action-btn ripple-container"
+                   style="background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3);">
+                    <i class="fas fa-headset me-2"></i>Contact Support
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // ============================================
+        // TYPING EFFECT
+        // ============================================
+        const phrases = [
+            "You don't have permission to access this resource.",
+            "This area is restricted to authorized users only.",
+            "Please verify your credentials and try again.",
+            "If you believe this is an error, contact support."
+        ];
+        let phraseIdx = 0, charIdx = 0, isDeleting = false;
+        const typingEl = document.getElementById('typingText');
+
+        function typeLoop() {
+            const current = phrases[phraseIdx];
+            if (!isDeleting) {
+                typingEl.textContent = current.substring(0, charIdx + 1);
+                charIdx++;
+                if (charIdx === current.length) {
+                    isDeleting = true;
+                    setTimeout(typeLoop, 2000);
+                    return;
+                }
+                setTimeout(typeLoop, 45);
+            } else {
+                typingEl.textContent = current.substring(0, charIdx - 1);
+                charIdx--;
+                if (charIdx === 0) {
+                    isDeleting = false;
+                    phraseIdx = (phraseIdx + 1) % phrases.length;
+                    setTimeout(typeLoop, 400);
+                    return;
+                }
+                setTimeout(typeLoop, 25);
+            }
+        }
+        typeLoop();
+
+        // ============================================
+        // LOCK SHAKE ON CLICK
+        // ============================================
+        const lockContainer = document.getElementById('lockContainer');
+        lockContainer.addEventListener('click', function () {
+            this.classList.remove('shaking');
+            void this.offsetWidth; // reflow
+            this.classList.add('shaking');
+            setTimeout(() => this.classList.remove('shaking'), 600);
+        });
+
+        // ============================================
+        // FLOATING PARTICLES
+        // ============================================
+        const particleContainer = document.getElementById('particleContainer');
+        function createParticles() {
+            for (let i = 0; i < 25; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                const size = Math.random() * 6 + 3;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.bottom = '-20px';
+                p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                particleContainer.appendChild(p);
+            }
+        }
+        createParticles();
+
+        // ============================================
+        // RIPPLE EFFECT ON BUTTONS
+        // ============================================
+        document.querySelectorAll('.ripple-container').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                const rect = this.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // ============================================
+        // REASON CARDS SCROLL REVEAL
+        // ============================================
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const delay = parseInt(entry.target.getAttribute('data-delay')) || 0;
+                    setTimeout(() => entry.target.classList.add('visible'), delay);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.reason-card').forEach(card => observer.observe(card));
+
+        // ============================================
+        // REDIRECT COUNTDOWN (optional auto-redirect)
+        // ============================================
+        const btnGoHome = document.getElementById('btnGoHome');
+        const redirectBar = document.getElementById('redirectBar');
+        const barFill = document.getElementById('barFill');
+
+        btnGoHome.addEventListener('mouseenter', function () {
+            redirectBar.classList.add('active');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 2;
+                barFill.style.width = progress + '%';
+                if (progress >= 100) clearInterval(interval);
+            }, 30);
+            this._interval = interval;
+        });
+
+        btnGoHome.addEventListener('mouseleave', function () {
+            clearInterval(this._interval);
+            barFill.style.width = '0%';
+            setTimeout(() => redirectBar.classList.remove('active'), 300);
+        });
+
+        // ============================================
+        // MOUSE PARALLAX ON HERO
+        // ============================================
+        const hero = document.getElementById('deniedHero');
+        hero.addEventListener('mousemove', function (e) {
+            const rect = this.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            const lockIcon = document.getElementById('lockIcon');
+            lockIcon.style.transform = `translate(${x * 15}px, ${y * 15}px)`;
+        });
+
+        hero.addEventListener('mouseleave', function () {
+            const lockIcon = document.getElementById('lockIcon');
+            lockIcon.style.transform = 'translate(0,0)';
+        });
+    </script>
+}

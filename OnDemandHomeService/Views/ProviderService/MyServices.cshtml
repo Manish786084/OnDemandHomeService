@@ -1,0 +1,116 @@
+﻿@model List<OnDemandHomeService.Models.ProviderService>
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    Layout = "~/Views/Shared/_ProviderLayout.cshtml";
+    ViewData["Title"] = "My Services";
+    var edit = ViewBag.EditService as OnDemandHomeService.Models.ProviderService;
+    var services = ViewBag.AllServices as SelectList;
+}
+
+<div class="row">
+
+    <!-- LEFT: Add/Edit -->
+    <div class="col-md-4">
+        <div class="card shadow p-3 mb-3">
+            <h4>@(edit != null ? "Edit Service" : "Add Service")</h4>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+
+            <form asp-action="SaveService" method="post">
+
+                <input type="hidden" name="ProviderServiceId"
+                       value="@(edit?.ProviderServiceId ?? 0)" />
+
+                <select name="ServiceId" class="form-select mb-2" required>
+                    <option value="">Select Service</option>
+
+                    @foreach (var s in services)
+                    {
+                        var selected = edit != null && edit.ServiceId == int.Parse(s.Value);
+
+                        <option value="@s.Value" selected="@(selected ? "selected" : null)">
+                            @s.Text
+                        </option>
+                    }
+                </select>
+
+                <input type="number" step="0.01"
+                       name="PriceOverride"
+                       class="form-control mb-2"
+                       placeholder="Price"
+                       value="@(edit?.PriceOverride?.ToString("0.00") ?? "")" />
+
+                <input type="number"
+                       name="ExperienceYears"
+                       class="form-control mb-2"
+                       placeholder="Experience Years"
+                       value="@(edit?.ExperienceYears?.ToString() ?? "")" />
+
+                <button class="btn btn-primary w-100">
+                    @(edit != null ? "Update Service" : "Add Service")
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RIGHT: Table -->
+    <div class="col-md-8">
+        <div class="card shadow p-3">
+            <h4>My Services</h4>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Price</th>
+                        <th>Experience</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Service?.ServiceName</td>
+                            <td>@(item.PriceOverride?.ToString("0.00") ?? "-")</td>
+                            <td>@(item.ExperienceYears ?? 0)</td>
+                            <td>
+                                <span class="badge @(item.IsApproved == true ? "bg-success" : "bg-warning")">
+                                    @(item.IsApproved == true ? "Approved" : "Pending")
+                                </span>
+                            </td>
+                            <td>
+                                <a asp-action="MyServices"
+                                   asp-route-id="@item.ProviderServiceId"
+                                   class="btn btn-warning btn-sm">Edit</a>
+
+                                <form asp-action="DeleteService"
+                                      method="post"
+                                      style="display:inline">
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@item.ProviderServiceId" />
+                                    <button class="btn btn-danger btn-sm">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>

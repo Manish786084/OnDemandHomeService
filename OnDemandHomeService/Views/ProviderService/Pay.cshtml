@@ -1,0 +1,201 @@
+﻿
+@model OnDemandHomeService.ViewModels.PaymentVM
+
+<!-- Add Bootstrap Icons if not already in your _Layout.cshtml -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card border-0 shadow-lg rounded-4" style="max-width: 480px; width: 100%;">
+        <div class="card-body p-4 p-md-5">
+
+            <!-- Header Section -->
+            <div class="text-center mb-4">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-credit-card-2-front fs-4 text-primary"></i>
+                </div>
+                <h3 class="fw-bold mb-0">Secure Payment</h3>
+                <p class="text-muted small mt-2">Complete your booking transaction</p>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="bg-light rounded-3 p-3 mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1 text-muted small">Service</p>
+                        <h6 class="mb-0 fw-bold">@Model.ServiceName</h6>
+                    </div>
+                    <div class="text-end">
+                        <p class="mb-1 text-muted small">Amount to Pay</p>
+                        <h4 class="mb-0 text-success fw-bold">₹ @Model.Amount</h4>
+                    </div>
+                </div>
+                <hr class="my-2">
+                <small class="text-muted d-block"><i class="bi bi-person-fill"></i> @Model.CustomerName</small>
+            </div>
+
+            <!-- Payment Form -->
+            <form asp-action="Pay" method="post" id="paymentForm">
+                <input type="hidden" asp-for="BookingId" />
+
+                <h6 class="text-muted text-uppercase small mb-3">Select Method</h6>
+
+                <!-- Payment Options Grid -->
+                <div class="row g-3 mb-4">
+                    <!-- UPI Option -->
+                    <div class="col-12">
+                        <label class="payment-option position-relative d-block" data-value="UPI">
+                            <input type="radio" asp-for="PaymentMethod" value="UPI" class="d-none" required />
+                            <div class="card border rounded-3 p-3 h-100 cursor-pointer option-card">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <i class="bi bi-phone fs-3 text-primary"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0 fw-bold">UPI / GPay</h6>
+                                        <small class="text-muted">Instant Payment</small>
+                                    </div>
+                                    <div class="form-check">
+                                        <span class="checkmark border rounded-circle d-inline-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Card Option -->
+                    <div class="col-12">
+                        <label class="payment-option position-relative d-block" data-value="Card">
+                            <input type="radio" asp-for="PaymentMethod" value="Card" class="d-none" />
+                            <div class="card border rounded-3 p-3 h-100 cursor-pointer option-card">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <i class="bi bi-credit-card-2-back fs-3 text-warning"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0 fw-bold">Credit / Debit Card</h6>
+                                        <small class="text-muted">Visa, Mastercard, RuPay</small>
+                                    </div>
+                                    <div class="form-check">
+                                        <span class="checkmark border rounded-circle d-inline-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Cash Option -->
+                    <div class="col-12">
+                        <label class="payment-option position-relative d-block" data-value="Cash">
+                            <input type="radio" asp-for="PaymentMethod" value="Cash" class="d-none" />
+                            <div class="card border rounded-3 p-3 h-100 cursor-pointer option-card">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <i class="bi bi-cash-stack fs-3 text-success"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0 fw-bold">Cash on Service</h6>
+                                        <small class="text-muted">Pay when service is done</small>
+                                    </div>
+                                    <div class="form-check">
+                                        <span class="checkmark border rounded-circle d-inline-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Validation Message -->
+                <span asp-validation-for="PaymentMethod" class="text-danger small d-block mb-3 text-center"></span>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3" id="payBtn">
+                    <span class="btn-text">Pay ₹ @Model.Amount</span>
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                </button>
+
+                <!-- Security Note -->
+                <div class="text-center mt-4">
+                    <small class="text-muted d-flex align-items-center justify-content-center">
+                        <i class="bi bi-shield-lock-fill me-2"></i> 100% Secure Transaction
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom CSS for Modern Payment Look */
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .option-card {
+        transition: all 0.2s ease-in-out;
+        background-color: #fff;
+    }
+
+        .option-card:hover {
+            border-color: #0d6efd !important;
+            background-color: #f8f9fa;
+        }
+
+    /* Style for the custom radio circle */
+    .checkmark {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ced4da !important;
+        position: relative;
+    }
+
+    /* Active State Styling */
+    .payment-option input:checked + .option-card {
+        border-color: #0d6efd !important;
+        background-color: #e7f1ff;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    }
+
+        .payment-option input:checked + .option-card .checkmark::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: #0d6efd;
+            border-radius: 50%;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        // Optional: Client-side script for better UX
+
+        // 1. Handle "Processing" state on button click
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            var btn = document.getElementById('payBtn');
+            var text = btn.querySelector('.btn-text');
+            var spinner = btn.querySelector('.spinner-border');
+
+            // Disable button and show spinner
+            btn.disabled = true;
+            text.textContent = "Processing...";
+            spinner.classList.remove('d-none');
+        });
+
+        // 2. Ensure clicking anywhere on the card selects the input
+        // (Note: wrapping the input in the label usually handles this, but this adds safety)
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+
+                // Trigger change event for validation frameworks if needed
+                const event = new Event('change', { bubbles: true });
+                radio.dispatchEvent(event);
+            });
+        });
+    </script>
+}

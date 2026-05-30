@@ -1,0 +1,417 @@
+﻿@model OnDemandHomeService.Models.Contact
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Contact Us";
+}
+
+@section Styles {
+    <style>
+        /* Hero Section */
+        .contact-hero {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            min-height: 480px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+            margin-top: -80px;
+            padding-top: 80px;
+            border-radius: 0 0 50px 0;
+        }
+
+            .contact-hero .hero-shape {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 150px;
+                background: #fff;
+                clip-path: polygon(0 100%, 100% 0, 100% 100%);
+            }
+
+            .contact-hero h1 {
+                font-size: 3.5rem;
+                font-weight: 700;
+                margin-bottom: 20px;
+            }
+
+        /* Contact Info Cards */
+        .info-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 35px 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            height: 100%;
+        }
+
+            .info-card:hover {
+                transform: translateY(-10px);
+                border-color: var(--primary, #4e73df);
+                box-shadow: 0 15px 30px rgba(78, 115, 223, 0.1);
+            }
+
+        .info-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--light-bg, #f8f9fc);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: var(--primary, #4e73df);
+            transition: all 0.3s;
+        }
+
+        .info-card:hover .info-icon {
+            background: var(--primary, #4e73df);
+            color: #fff;
+        }
+
+        /* Contact Form */
+        .contact-form-wrapper {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+            .contact-form-wrapper .form-control,
+            .contact-form-wrapper .form-select {
+                border-radius: 10px;
+                padding: 12px 16px;
+                border: 1px solid #e3e6f0;
+                background: #f8f9fc;
+                transition: all 0.3s;
+            }
+
+                .contact-form-wrapper .form-control:focus,
+                .contact-form-wrapper .form-select:focus {
+                    border-color: #4e73df;
+                    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.15);
+                    background: #fff;
+                }
+
+            .contact-form-wrapper textarea.form-control {
+                min-height: 140px;
+                resize: vertical;
+            }
+
+            .contact-form-wrapper label {
+                font-weight: 600;
+                color: #3a3b45;
+                margin-bottom: 6px;
+            }
+
+        /* Map */
+        .map-wrapper {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            min-height: 460px;
+        }
+
+            .map-wrapper iframe {
+                width: 100%;
+                height: 100%;
+                min-height: 460px;
+                border: none;
+            }
+
+        /* FAQ */
+        .faq-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+            .faq-item:hover {
+                box-shadow: 0 6px 20px rgba(78, 115, 223, 0.1);
+            }
+
+        .faq-question {
+            font-weight: 600;
+            color: #3a3b45;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            color: #6c757d;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-item.active .faq-chevron {
+            transform: rotate(180deg);
+        }
+
+        .faq-chevron {
+            transition: transform 0.3s;
+            color: #4e73df;
+        }
+
+        @@media (max-width: 768px) {
+            .contact-hero h1 {
+                font-size: 2rem;
+            }
+
+            .contact-form-wrapper {
+                padding: 25px;
+            }
+        }
+    </style>
+}
+
+<!-- ========================================= -->
+<!-- HERO SECTION -->
+<!-- ========================================= -->
+<section class="contact-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1>Let's Start a<br>Conversation.</h1>
+                    <p class="lead mb-4">Have a question, suggestion, or need help? We'd love to hear from you. Our team typically responds within 24 hours.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#contactForm" class="btn btn-warning btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Send a Message
+                        </a>
+                        <a href="tel:+911800123456" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-phone me-2"></i>Call Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center">
+                <img src="https://cdn-icons-png.flaticon.com/512/3062/3062634.png"
+                     class="img-fluid"
+                     style="max-width: 360px; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));"
+                     alt="Contact Illustration">
+            </div>
+        </div>
+    </div>
+    <div class="hero-shape"></div>
+</section>
+
+<!-- ========================================= -->
+<!-- CONTACT INFO CARDS -->
+<!-- ========================================= -->
+<section class="py-5" style="margin-top: -40px; position: relative; z-index: 2;">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="info-card">
+                    <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h6 class="fw-bold">Our Office</h6>
+                    <p class="text-muted small mb-0">123 Service Lane, Tech Park,<br>Bengaluru, KA 560001</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="info-card">
+                    <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
+                    <h6 class="fw-bold">Phone</h6>
+                    <p class="text-muted small mb-0">+91 1800-123-456<br>+91 9876-543-210</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="info-card">
+                    <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                    <h6 class="fw-bold">Email</h6>
+                    <p class="text-muted small mb-0">support@ondemandhome.com<br>hello@ondemandhome.com</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="info-card">
+                    <div class="info-icon"><i class="fas fa-clock"></i></div>
+                    <h6 class="fw-bold">Working Hours</h6>
+                    <p class="text-muted small mb-0">Mon – Sat: 8 AM – 9 PM<br>Sun: 9 AM – 6 PM</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- CONTACT FORM + MAP -->
+<!-- ========================================= -->
+<section class="py-5 bg-light" id="contactForm">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <h2>Get In Touch</h2>
+            <p class="text-muted mt-3">Fill out the form below and we'll get back to you shortly</p>
+        </div>
+        <div class="row g-4">
+            <!-- Form -->
+            <div class="col-lg-7">
+                
+                <div class="contact-form-wrapper">
+                    @if (TempData["success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>@TempData["name"]</strong> @TempData["success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    <form asp-action="Contact" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" asp-for="FullName" class="form-control" id="fullName" name="FullName" placeholder="Enter Name." required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email">Email Address</label>
+                                <input asp-for="Email" type="email" class="form-control" id="email" name="Email" placeholder="Enter Email." required>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Phone" for="phone">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="Phone" placeholder="Enter Phone Number.">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="subject">Subject</label>
+                                <select asp-for="Subject" class="form-select" id="subject" name="Subject" required>
+                                    <option value="" disabled selected>Select a topic</option>
+                                    <option value="General Inquiry">General Inquiry</option>
+                                    <option value="Service Issue">Service Issue</option>
+                                    <option value="Booking Problem">Booking Problem</option>
+                                    <option value="Partner With Us">Partner With Us</option>
+                                    <option value="Feedback">Feedback</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="message">Message</label>
+                                <textarea asp-for="Message" class="form-control" id="message" name="Message" placeholder="Tell us how we can help you..." required></textarea>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <button type="submit" class="btn btn-primary btn-lg px-5">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Map -->
+            <div class="col-lg-5">
+                <div class="map-wrapper">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d248849.886539092!2d77.49085423279866!3d12.954517015024498!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4fe0!2sBengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1690000000000!5m2!1sen!2sin"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- FAQ SECTION -->
+<!-- ========================================= -->
+<section class="py-5">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <h2>Frequently Asked Questions</h2>
+            <p class="text-muted mt-3">Quick answers to common queries</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="faq-item active">
+                    <div class="faq-question">
+                        How do I book a service?
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Simply browse our services, select the one you need, choose a time slot, and confirm your booking. You'll receive a confirmation within minutes.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Are your professionals verified?
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes, every professional undergoes a thorough background check, skill assessment, and document verification before being listed on our platform.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What if I'm not satisfied with the service?
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </div>
+                    <div class="faq-answer">
+                        We offer a satisfaction guarantee. If the service doesn't meet your expectations, contact us within 48 hours and we'll arrange a redo or a full refund.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Can I cancel or reschedule a booking?
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Absolutely. You can cancel or reschedule up to 2 hours before the scheduled time at no extra cost through your dashboard.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How do I become a service provider?
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Click "Partner With Us" in the subject above or visit our registration page. You'll need to submit your ID, certifications, and pass our onboarding process.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- CTA BANNER -->
+<!-- ========================================= -->
+<section class="py-5">
+    <div class="container">
+        <div style="background: linear-gradient(135deg, #4e73df 0%, #224abe 100%); border-radius: 20px; padding: 60px 40px; color: #fff;" class="text-center">
+            <h2 class="fw-bold mb-3">Need Immediate Help?</h2>
+            <p class="lead mb-4 opacity-75">Our support team is just a call away, available 7 days a week.</p>
+            <a href="tel:+911800123456" class="btn btn-warning btn-lg px-5 me-3">
+                <i class="fas fa-phone me-2"></i>Call Now
+            </a>
+            <a href="mailto:support@ondemandhome.com" class="btn btn-outline-light btn-lg px-5">
+                <i class="fas fa-envelope me-2"></i>Email Us
+            </a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // FAQ Accordion Toggle
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', function () {
+                // Close others
+                document.querySelectorAll('.faq-item').forEach(other => {
+                    if (other !== this) other.classList.remove('active');
+                });
+                // Toggle current
+                this.classList.toggle('active');
+            });
+        });
+    </script>
+}

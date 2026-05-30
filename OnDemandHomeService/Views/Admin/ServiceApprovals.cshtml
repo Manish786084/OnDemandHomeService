@@ -1,0 +1,50 @@
+﻿@model List<OnDemandHomeService.Models.ProviderService>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h3 class="text-center">Provider Service Approvals</h3>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Provider</th>
+            <th>Service</th>
+            <th>Price</th>
+            <th>Experience</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Provider?.FullName</td>
+                <td>@item.Service?.ServiceName</td>
+                <td>@(item.PriceOverride?.ToString("0.00") ?? "-")</td>
+                <td>@(item.ExperienceYears ?? 0)</td>
+
+                <td>
+                    <span class="badge @(item.IsApproved == true ? "bg-success" : "bg-warning")">
+                        @(item.IsApproved == true ? "Approved" : "Pending")
+                    </span>
+                </td>
+
+                <td>
+                    <form asp-action="ToggleApproval" method="post" style="display:inline">
+                        <input type="hidden" name="id" value="@item.ProviderServiceId" />
+                        <button class="btn btn-sm btn-info">
+                            @(item.IsApproved == true ? "Revoke" : "Approve")
+                        </button>
+                    </form>
+
+                    <form asp-action="Delete" method="post" style="display:inline">
+                        <input type="hidden" name="id" value="@item.ProviderServiceId" />
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

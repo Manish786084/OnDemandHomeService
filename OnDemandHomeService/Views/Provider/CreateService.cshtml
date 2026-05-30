@@ -1,0 +1,71 @@
+﻿@model OnDemandHomeService.Models.Service
+@{
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";  
+    ViewData["Title"] = "Service Management";
+}
+<div class="container mt-3">
+
+    <h3 class="text-center">
+        @(Model.ServiceId == 0 ? "Add Service" : "Edit Service")
+    </h3>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <form asp-action="CreateService" method="post">
+
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <input type="hidden" asp-for="ServiceId" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Service Name</label>
+            <input asp-for="ServiceName" class="form-control" />
+            <span asp-validation-for="ServiceName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+
+            <select asp-for="CategoryId"
+                    asp-items="ViewBag.Categories"
+                    class="form-control">
+
+                <option value="">-- Select Category --</option>
+
+            </select>
+
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+<textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Base Price</label>
+            <input asp-for="BasePrice" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Duration (Minutes)</label>
+            <input asp-for="DurationMinutes" class="form-control" />
+        </div>
+
+        <div class="mb-3 form-check">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label class="form-check-label">Active</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            @(Model.ServiceId == 0 ? "Save Service" : "Update Service")
+        </button>
+
+        <a asp-action="ShowAddService" class="btn btn-secondary">
+            Back
+        </a>
+
+    </form>
+
+</div>

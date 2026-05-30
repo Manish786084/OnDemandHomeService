@@ -1,0 +1,207 @@
+﻿@model OnDemandHomeService.ViewModels.CategoryVM
+
+@{
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Category Management";
+}
+
+<div class="container-fluid">
+
+    <h2 class="mb-4 text-center">Category Management</h2>
+
+    <div class="row g-4">
+
+        <!-- LEFT SIDE : FORM -->
+        <div class="col-lg-4 col-md-5">
+
+            <div class="card shadow border-0">
+                <div class="card-body">
+
+                    <h4 class="mb-3 text-center">
+                        @(Model.IsEdit ? "Edit Category" : "Add Category")
+                    </h4>
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["Error"]
+                        </div>
+                    }
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["Success"]
+                        </div>
+                    }
+
+                    <form asp-action="Save" method="post">
+
+                        <input type="hidden" asp-for="NewCategory.CategoryId" />
+
+                        <!-- CATEGORY NAME -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                Category Name
+                            </label>
+
+                            <input required asp-for="NewCategory.CategoryName"
+                                   class="form-control"
+                                   placeholder="Enter category name" />
+
+                            <span asp-validation-for="NewCategory.CategoryName"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <!-- ICON URL -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                Icon URL
+                            </label>
+
+                            <input required asp-for="NewCategory.Icon"
+                                   class="form-control"
+                                   placeholder="Enter icon url" />
+
+                            <span asp-validation-for="NewCategory.Icon"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <!-- BUTTON -->
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+                            @(Model.IsEdit ? "Update Category" : "Add Category")
+                        </button>
+
+                        <!-- CANCEL -->
+                        @if (Model.IsEdit)
+                        {
+                            <a href="/Category/ShowCategory"
+                               class="btn btn-secondary w-100 mt-2">
+                                Cancel Edit
+                            </a>
+                        }
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE : TABLE -->
+        <div class="col-lg-8 col-md-7">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <h4 class="mb-3 text-center text-md-start">
+                        Category List
+                    </h4>
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered table-striped align-middle">
+
+                            <thead class="table-dark text-center">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Icon</th>
+                                    <th width="160">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @if (Model.Categories == null || Model.Categories.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="3"
+                                            class="text-center text-muted">
+                                            No categories found
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.Categories)
+                                    {
+                                        <tr>
+
+                                            <!-- CATEGORY NAME -->
+                                            <td>
+                                                @item.CategoryName
+                                            </td>
+
+                                            <!-- ICON URL -->
+                                            <td style="max-width:180px;">
+
+                                                <a href="@item.Icon"
+                                                   target="_blank"
+                                                   class="text-decoration-none">
+
+                                                    @(item.Icon.Length > 30
+                                                                                                ? item.Icon.Substring(0, 30) + "..."
+                                                                                                : item.Icon)
+
+                                        </a>
+
+                                            </td>
+
+                                            <!-- ACTION -->
+                                            <td>
+
+                                                <div class="d-flex flex-column gap-2">
+
+                                                    <!-- EDIT -->
+                                                    <a href="/Category/ShowCategory/@item.CategoryId"
+                                                       class="btn btn-warning btn-sm w-80">
+                                                        Edit
+                                                    </a>
+
+                                                    <!-- DELETE -->
+                                                    <form asp-action="Delete"
+                                                          method="post"
+                                                          class="w-100">
+
+                                                        <input type="hidden"
+                                                               name="id"
+                                                               value="@item.CategoryId" />
+
+                                                        <button type="submit"
+                                                                class="btn btn-danger btn-sm w-100"
+                                                                onclick="return confirm('Delete this category?')">
+                                                            Delete
+                                                        </button>
+
+                                                    </form>
+
+                                                </div>
+
+                                            </td>
+
+                                        </tr>
+                                                                }
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

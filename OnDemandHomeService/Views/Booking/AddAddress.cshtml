@@ -1,0 +1,301 @@
+﻿@* @model OnDemandHomeService.Models.Address
+
+
+<h3 class="text-center font-weight-bold">Add Address</h3>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <form method="post">
+
+                <input type="hidden" name="serviceId" value="@ViewBag.ServiceId" />
+
+                <div class="mb-2">
+                    <label asp-for="Street">Street</label>
+                    <input asp-for="Street" class="form-control" required />
+                </div>
+
+                <div class="mb-2">
+                    <label asp-for="City">City</label>
+                    <input asp-for="City" class="form-control" required />
+                </div>
+
+                <div class="mb-2">
+                    <label asp-for="State">State</label>
+                    <input asp-for="State" class="form-control" required />
+                </div>
+
+                <div class="mb-2">
+                    <label asp-for="Pincode">Pincode</label>
+                    <input asp-for="Pincode" class="form-control" required />
+                </div>
+
+                <div class="mb-2">
+                    <label asp-for="Landmark">Landmark</label>
+                    <input asp-for="Landmark" class="form-control" />
+                </div>
+
+                <button class="btn btn-success w-100">Save Address</button>
+
+            </form>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+ *@
+@model OnDemandHomeService.Models.Address
+
+@{
+    ViewData["Title"] = "Add Address";
+}
+
+@section Styles {
+    <style>
+        /* Page Background */
+        .address-page-bg {
+            background: #f8f9fc;
+            min-height: 100vh;
+            padding-top: 120px; /* Space for fixed navbar */
+            padding-bottom: 50px;
+        }
+
+        /* Main Card */
+        .address-card {
+            border: none;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(78, 115, 223, 0.15);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @@keyframes slideUp {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        /* Card Header with Gradient */
+        .address-card-header {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            padding: 35px 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+            .address-card-header::after {
+                content: '';
+                position: absolute;
+                bottom: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border-left: 20px solid transparent;
+                border-right: 20px solid transparent;
+                border-top: 20px solid #224abe;
+            }
+
+        .header-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Card Body */
+        .address-card-body {
+            padding: 40px;
+            background: #fff;
+        }
+
+        /* Form Controls */
+        .form-label-custom {
+            font-weight: 600;
+            color: #3a3b45;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-control-custom {
+            border: 2px solid #e3e6f0;
+            border-radius: 12px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8f9fc;
+        }
+
+            .form-control-custom:focus {
+                border-color: #4e73df;
+                box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.15);
+                background-color: #fff;
+            }
+
+            .form-control-custom::placeholder {
+                color: #b7b9cc;
+            }
+
+        /* Save Button */
+        .btn-save-address {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+            .btn-save-address::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 0%;
+                height: 100%;
+                background: linear-gradient(135deg, #224abe 0%, #1a3a9e 100%);
+                transition: width 0.4s ease;
+                z-index: -1;
+            }
+
+            .btn-save-address:hover::before {
+                width: 100%;
+            }
+
+            .btn-save-address:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(78, 115, 223, 0.4);
+                color: white;
+            }
+
+        /* Cancel Link */
+        .btn-cancel {
+            border-radius: 12px;
+            padding: 15px;
+            font-weight: 600;
+            border: 2px solid #e3e6f0;
+            color: #5a5c69;
+            transition: all 0.3s ease;
+        }
+
+            .btn-cancel:hover {
+                background: #f8f9fc;
+                border-color: #d1d3e2;
+                color: #3a3b45;
+            }
+    </style>
+}
+
+<!-- ========================================= -->
+<!-- ADD ADDRESS PAGE LAYOUT -->
+<!-- ========================================= -->
+<div class="address-page-bg">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+
+                <div class="card address-card">
+
+                    <!-- Header -->
+                    <div class="address-card-header">
+                        <div class="header-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3 class="fw-bold mb-0">Add New Address</h3>
+                        <p class="small mb-0 mt-1" style="opacity: 0.8;">Where should our professional go?</p>
+                    </div>
+
+                    <!-- Form Body -->
+                    <div class="address-card-body">
+                        <form method="post">
+                            <input type="hidden" name="serviceId" value="@ViewBag.ServiceId" />
+
+                            <!-- Street -->
+                            <div class="mb-3">
+                                <label asp-for="Street" class="form-label-custom">
+                                    <i class="fas fa-road me-1 text-primary"></i> Street Address
+                                </label>
+                                <input asp-for="Street" class="form-control form-control-custom" placeholder="e.g. 123 Main Street, Apt 4B" required />
+                            </div>
+
+                            <!-- Landmark -->
+                            <div class="mb-4">
+                                <label asp-for="Landmark" class="form-label-custom">
+                                    <i class="fas fa-landmark me-1 text-primary"></i> Landmark <span class="text-muted fw-normal">(Optional)</span>
+                                </label>
+                                <input asp-for="Landmark" class="form-control form-control-custom" placeholder="e.g. Near City Hospital" />
+                            </div>
+
+                            <hr class="my-4" style="border-color: #e3e6f0;">
+
+                            <!-- City -->
+                            <div class="mb-3">
+                                <label asp-for="City" class="form-label-custom">
+                                    <i class="fas fa-city me-1 text-primary"></i> City
+                                </label>
+                                <input asp-for="City" class="form-control form-control-custom" placeholder="e.g. Mumbai" required />
+                            </div>
+
+                            <!-- State & Pincode Row -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label asp-for="State" class="form-label-custom">
+                                        <i class="fas fa-flag me-1 text-primary"></i> State
+                                    </label>
+                                    <input asp-for="State" class="form-control form-control-custom" placeholder="e.g. Maharashtra" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Pincode" class="form-label-custom">
+                                        <i class="fas fa-hashtag me-1 text-primary"></i> Pincode
+                                    </label>
+                                    <input asp-for="Pincode" class="form-control form-control-custom" placeholder="e.g. 400001" required />
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="row g-3 mt-2">
+                                <div class="col-6">
+                                    <!-- Assuming you want a way to go back -->
+                                    <a href="javascript:history.back()" class="btn btn-cancel w-100">
+                                        Cancel
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-save-address w-100">
+                                        <i class="fas fa-check me-2"></i>Save
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

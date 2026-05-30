@@ -1,0 +1,833 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+}
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Terms & Policy";
+}
+
+@section Styles {
+    <style>
+        /* Hero Section - Same as Home */
+        .terms-hero {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+            margin-top: -80px;
+            padding-top: 80px;
+            border-radius: 0 0 50px 0;
+        }
+
+            .terms-hero h1 {
+                font-size: 3.5rem;
+                font-weight: 700;
+                margin-bottom: 15px;
+            }
+
+        .hero-shape {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: #fff;
+            clip-path: polygon(0 100%, 100% 0, 100% 100%);
+        }
+
+        /* Table of Contents */
+        .toc-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid transparent;
+            position: sticky;
+            top: 100px;
+        }
+
+            .toc-card:hover {
+                border-color: var(--primary);
+                box-shadow: 0 15px 30px rgba(78, 115, 223, 0.1);
+            }
+
+            .toc-card h5 {
+                color: #4e73df;
+                font-weight: 700;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid #f0f0f0;
+            }
+
+        .toc-link {
+            display: block;
+            padding: 10px 15px;
+            color: #5a5c69;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+            .toc-link:hover,
+            .toc-link.active {
+                background: rgba(78, 115, 223, 0.1);
+                color: #4e73df;
+                font-weight: 600;
+                padding-left: 20px;
+            }
+
+            .toc-link i {
+                margin-right: 8px;
+                font-size: 0.8rem;
+            }
+
+        /* Content Sections */
+        .terms-content {
+            background: #fff;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .terms-section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+            .terms-section:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+
+            .terms-section h3 {
+                color: #224abe;
+                font-weight: 700;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+            }
+
+                .terms-section h3 .section-icon {
+                    width: 45px;
+                    height: 45px;
+                    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 15px;
+                    color: #fff;
+                    font-size: 1.1rem;
+                    flex-shrink: 0;
+                }
+
+            .terms-section p {
+                color: #5a5c69;
+                line-height: 1.8;
+                margin-bottom: 15px;
+            }
+
+            .terms-section ul {
+                color: #5a5c69;
+                line-height: 2;
+            }
+
+                .terms-section ul li::marker {
+                    color: #4e73df;
+                }
+
+        .highlight-box {
+            background: rgba(78, 115, 223, 0.07);
+            border-left: 4px solid #4e73df;
+            border-radius: 0 12px 12px 0;
+            padding: 20px 25px;
+            margin: 20px 0;
+        }
+
+            .highlight-box.warning {
+                background: rgba(234, 179, 8, 0.08);
+                border-left-color: #eab308;
+            }
+
+            .highlight-box.danger {
+                background: rgba(239, 68, 68, 0.07);
+                border-left-color: #ef4444;
+            }
+
+            .highlight-box p {
+                margin-bottom: 0;
+            }
+
+        /* Last Updated Badge */
+        .last-updated {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+            .last-updated i {
+                margin-right: 8px;
+            }
+
+        /* Tab Navigation */
+        .policy-tabs {
+            background: #fff;
+            border-radius: 15px;
+            padding: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: inline-flex;
+            margin-bottom: 30px;
+        }
+
+        .policy-tab {
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #5a5c69;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+
+            .policy-tab:hover {
+                color: #4e73df;
+            }
+
+            .policy-tab.active {
+                background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+                color: #fff;
+                box-shadow: 0 5px 15px rgba(78, 115, 223, 0.3);
+            }
+
+        /* Scroll to Top */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(78, 115, 223, 0.3);
+            transition: all 0.3s ease;
+            display: none;
+            z-index: 999;
+        }
+
+            .scroll-top-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(78, 115, 223, 0.4);
+            }
+
+        /* Accept Section */
+        .accept-section {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            border-radius: 15px;
+            padding: 40px;
+            color: #fff;
+            text-align: center;
+        }
+
+            .accept-section .btn-accept {
+                background: #fff;
+                color: #4e73df;
+                padding: 12px 40px;
+                border-radius: 50px;
+                font-weight: 700;
+                transition: all 0.3s;
+                border: none;
+            }
+
+                .accept-section .btn-accept:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                }
+
+        @@media (max-width: 768px) {
+            .terms-hero h1 {
+                font-size: 2rem;
+            }
+
+            .terms-content {
+                padding: 25px 20px;
+            }
+
+            .toc-card {
+                position: static;
+                margin-bottom: 30px;
+            }
+
+            .policy-tabs {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .policy-tab {
+                text-align: center;
+            }
+
+            .terms-section h3 {
+                font-size: 1.2rem;
+            }
+
+                .terms-section h3 .section-icon {
+                    width: 38px;
+                    height: 38px;
+                    font-size: 0.9rem;
+                    margin-right: 10px;
+                }
+        }
+    </style>
+}
+
+<!-- ========================================= -->
+<!-- HERO SECTION -->
+<!-- ========================================= -->
+<section class="terms-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="hero-content">
+                    <h1>Terms & <br>Privacy Policy.</h1>
+                    <p class="lead mb-4">Your trust matters to us. Please review our terms of service and how we handle your data.</p>
+                    <span class="last-updated">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        Last Updated: April 15, 2026
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block text-center">
+                <i class="fas fa-file-contract" style="font-size: 10rem; opacity: 0.2;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="hero-shape"></div>
+</section>
+
+<!-- ========================================= -->
+<!-- TAB NAVIGATION -->
+<!-- ========================================= -->
+<section class="py-5 mt-3">
+    <div class="container">
+
+        <div class="text-center">
+            <div class="policy-tabs">
+                <button class="policy-tab active" data-target="#termsContent" onclick="switchTab(this)">
+                    <i class="fas fa-file-signature me-2"></i>Terms of Service
+                </button>
+                <button class="policy-tab" data-target="#privacyContent" onclick="switchTab(this)">
+                    <i class="fas fa-shield-alt me-2"></i>Privacy Policy
+                </button>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+
+            <!-- Sidebar / Table of Contents -->
+            <div class="col-lg-3 mb-4">
+                <div class="toc-card" id="tocTerms">
+                    <h5><i class="fas fa-list-ul me-2"></i> Table of Contents</h5>
+                    <a href="#acceptance" class="toc-link" onclick="scrollToSection(event, 'acceptance')">
+                        <i class="fas fa-chevron-right"></i> 1. Acceptance of Terms
+                    </a>
+                    <a href="#use-of-service" class="toc-link" onclick="scrollToSection(event, 'use-of-service')">
+                        <i class="fas fa-chevron-right"></i> 2. Use of Service
+                    </a>
+                    <a href="#user-accounts" class="toc-link" onclick="scrollToSection(event, 'user-accounts')">
+                        <i class="fas fa-chevron-right"></i> 3. User Accounts
+                    </a>
+                    <a href="#bookings" class="toc-link" onclick="scrollToSection(event, 'bookings')">
+                        <i class="fas fa-chevron-right"></i> 4. Bookings & Payments
+                    </a>
+                    <a href="#cancellation" class="toc-link" onclick="scrollToSection(event, 'cancellation')">
+                        <i class="fas fa-chevron-right"></i> 5. Cancellation Policy
+                    </a>
+                    <a href="#liability" class="toc-link" onclick="scrollToSection(event, 'liability')">
+                        <i class="fas fa-chevron-right"></i> 6. Limitation of Liability
+                    </a>
+                    <a href="#prohibited" class="toc-link" onclick="scrollToSection(event, 'prohibited')">
+                        <i class="fas fa-chevron-right"></i> 7. Prohibited Conduct
+                    </a>
+                    <a href="#changes" class="toc-link" onclick="scrollToSection(event, 'changes')">
+                        <i class="fas fa-chevron-right"></i> 8. Changes to Terms
+                    </a>
+                </div>
+
+                <div class="toc-card" id="tocPrivacy" style="display:none;">
+                    <h5><i class="fas fa-list-ul me-2"></i> Table of Contents</h5>
+                    <a href="#info-collected" class="toc-link" onclick="scrollToSection(event, 'info-collected')">
+                        <i class="fas fa-chevron-right"></i> 1. Information Collected
+                    </a>
+                    <a href="#how-we-use" class="toc-link" onclick="scrollToSection(event, 'how-we-use')">
+                        <i class="fas fa-chevron-right"></i> 2. How We Use Your Data
+                    </a>
+                    <a href="#data-sharing" class="toc-link" onclick="scrollToSection(event, 'data-sharing')">
+                        <i class="fas fa-chevron-right"></i> 3. Data Sharing
+                    </a>
+                    <a href="#data-security" class="toc-link" onclick="scrollToSection(event, 'data-security')">
+                        <i class="fas fa-chevron-right"></i> 4. Data Security
+                    </a>
+                    <a href="#cookies" class="toc-link" onclick="scrollToSection(event, 'cookies')">
+                        <i class="fas fa-chevron-right"></i> 5. Cookies & Tracking
+                    </a>
+                    <a href="#your-rights" class="toc-link" onclick="scrollToSection(event, 'your-rights')">
+                        <i class="fas fa-chevron-right"></i> 6. Your Rights
+                    </a>
+                    <a href="#data-retention" class="toc-link" onclick="scrollToSection(event, 'data-retention')">
+                        <i class="fas fa-chevron-right"></i> 7. Data Retention
+                    </a>
+                    <a href="#contact-privacy" class="toc-link" onclick="scrollToSection(event, 'contact-privacy')">
+                        <i class="fas fa-chevron-right"></i> 8. Contact Us
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+
+                <!-- ========================================= -->
+                <!-- TERMS OF SERVICE -->
+                <!-- ========================================= -->
+                <div id="termsContent">
+                    <div class="terms-content">
+
+                        <div class="terms-section" id="acceptance">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-handshake"></i></span>
+                                1. Acceptance of Terms
+                            </h3>
+                            <p>
+                                By accessing or using the <strong>OnDemand Home Services</strong> platform ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not access or use the Service.
+                            </p>
+                            <div class="highlight-box">
+                                <p><i class="fas fa-info-circle text-primary me-2"></i> These Terms constitute a legally binding agreement between you and OnDemand Home Services. Please read them carefully before using our platform.</p>
+                            </div>
+                            <p>
+                                The Service connects customers ("Users") with independent third-party service providers ("Professionals") who offer home services including but not limited to cleaning, plumbing, electrical work, painting, and more.
+                            </p>
+                        </div>
+
+                        <div class="terms-section" id="use-of-service">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-laptop"></i></span>
+                                2. Use of Service
+                            </h3>
+                            <p>You may use the Service only for lawful purposes and in accordance with these Terms. You agree to:</p>
+                            <ul>
+                                <li>Provide accurate, current, and complete information during registration and booking.</li>
+                                <li>Maintain the security and confidentiality of your account credentials.</li>
+                                <li>Accept responsibility for all activities that occur under your account.</li>
+                                <li>Not impersonate any person or entity or misrepresent your identity.</li>
+                                <li>Not use the Service for any unauthorized commercial purpose.</li>
+                            </ul>
+                            <div class="highlight-box warning">
+                                <p><i class="fas fa-exclamation-triangle text-warning me-2"></i> Any misuse of the platform may result in immediate suspension or termination of your account without prior notice.</p>
+                            </div>
+                        </div>
+
+                        <div class="terms-section" id="user-accounts">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-user-circle"></i></span>
+                                3. User Accounts
+                            </h3>
+                            <p>To access certain features of the Service, you must create an account. You are responsible for:</p>
+                            <ul>
+                                <li>Maintaining the confidentiality of your password and account information.</li>
+                                <li>Immediately notifying us of any unauthorized use of your account.</li>
+                                <li>Ensuring all information provided is accurate and kept up to date.</li>
+                            </ul>
+                            <p>
+                                We reserve the right to suspend or terminate accounts that are found to be in violation of these Terms or engaged in fraudulent activity.
+                            </p>
+                        </div>
+
+                        <div class="terms-section" id="bookings">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-calendar-check"></i></span>
+                                4. Bookings & Payments
+                            </h3>
+                            <p>When you book a service through our platform:</p>
+                            <ul>
+                                <li>All prices are displayed in Indian Rupees (₹) and include applicable taxes unless stated otherwise.</li>
+                                <li>Payment must be made through the platform's approved payment methods.</li>
+                                <li>A booking is confirmed only upon successful payment processing.</li>
+                                <li>Service Providers are independent contractors, not employees of OnDemand Home Services.</li>
+                            </ul>
+                            <div class="highlight-box">
+                                <p><i class="fas fa-info-circle text-primary me-2"></i> OnDemand Home Services acts solely as an intermediary platform. We do not guarantee the quality of services rendered by Professionals, though we maintain a rating and review system to help you make informed decisions.</p>
+                            </div>
+                        </div>
+
+                        <div class="terms-section" id="cancellation">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-times-circle"></i></span>
+                                5. Cancellation Policy
+                            </h3>
+                            <p>We understand that plans change. Our cancellation policy is as follows:</p>
+                            <ul>
+                                <li><strong>More than 24 hours before scheduled service:</strong> Full refund, no cancellation fee.</li>
+                                <li><strong>12–24 hours before scheduled service:</strong> 50% refund applicable.</li>
+                                <li><strong>Less than 12 hours before scheduled service:</strong> No refund; full cancellation fee applies.</li>
+                                <li><strong>No-show:</strong> No refund will be issued.</li>
+                            </ul>
+                            <div class="highlight-box danger">
+                                <p><i class="fas fa-exclamation-circle text-danger me-2"></i> Repeated cancellations may result in account restrictions or a temporary booking hold on your account.</p>
+                            </div>
+                            <p>
+                                Refunds, when applicable, will be processed within 5–7 business days to the original payment method.
+                            </p>
+                        </div>
+
+                        <div class="terms-section" id="liability">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-shield-alt"></i></span>
+                                6. Limitation of Liability
+                            </h3>
+                            <p>
+                                OnDemand Home Services shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from:
+                            </p>
+                            <ul>
+                                <li>The performance or non-performance of service providers.</li>
+                                <li>Any injury, loss, or damage occurring during or after a service appointment.</li>
+                                <li>Any unauthorized access to or alteration of your data.</li>
+                                <li>Any interruption or cessation of the Service.</li>
+                            </ul>
+                            <p>
+                                Our total liability to you for all claims arising out of or relating to the Service shall not exceed the total amount paid by you to OnDemand Home Services in the 12 months preceding the claim.
+                            </p>
+                        </div>
+
+                        <div class="terms-section" id="prohibited">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-ban"></i></span>
+                                7. Prohibited Conduct
+                            </h3>
+                            <p>You agree NOT to:</p>
+                            <ul>
+                                <li>Use the platform to harass, abuse, or harm another user or service provider.</li>
+                                <li>Submit false reviews, ratings, or feedback.</li>
+                                <li>Attempt to bypass payment systems or engage in fraudulent transactions.</li>
+                                <li>Reverse-engineer, decompile, or disassemble any part of the platform.</li>
+                                <li>Use automated tools or bots to access or scrape the platform.</li>
+                                <li>Transmit any viruses, malware, or harmful code through the platform.</li>
+                            </ul>
+                        </div>
+
+                        <div class="terms-section" id="changes">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-edit"></i></span>
+                                8. Changes to Terms
+                            </h3>
+                            <p>
+                                We reserve the right to modify these Terms at any time. Changes will be effective immediately upon posting on the platform. Continued use of the Service after any such changes constitutes your acceptance of the new Terms.
+                            </p>
+                            <div class="highlight-box warning">
+                                <p><i class="fas fa-bell text-warning me-2"></i> We will make reasonable efforts to notify you of significant changes via email or platform notification. It is your responsibility to review these Terms periodically.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ========================================= -->
+                <!-- PRIVACY POLICY -->
+                <!-- ========================================= -->
+                <div id="privacyContent" style="display:none;">
+                    <div class="terms-content">
+
+                        <div class="terms-section" id="info-collected">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-database"></i></span>
+                                1. Information Collected
+                            </h3>
+                            <p>We collect the following types of information to provide and improve our Service:</p>
+                            <p><strong>Personal Information:</strong></p>
+                            <ul>
+                                <li>Full name, email address, and phone number.</li>
+                                <li>Home address and service location details.</li>
+                                <li>Payment method information (processed securely by third-party payment processors).</li>
+                                <li>Profile photos (optional).</li>
+                            </ul>
+                            <p><strong>Usage Information:</strong></p>
+                            <ul>
+                                <li>Device information (browser type, operating system, device ID).</li>
+                                <li>Log data (IP address, access times, pages viewed).</li>
+                                <li>Location data (with your consent) to suggest nearby services.</li>
+                            </ul>
+                        </div>
+
+                        <div class="terms-section" id="how-we-use">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-cogs"></i></span>
+                                2. How We Use Your Data
+                            </h3>
+                            <p>We use the information we collect to:</p>
+                            <ul>
+                                <li>Facilitate bookings and connect you with service providers.</li>
+                                <li>Process payments and send booking confirmations.</li>
+                                <li>Communicate service updates, promotions, and support messages.</li>
+                                <li>Improve our platform's functionality and user experience.</li>
+                                <li>Monitor and analyze usage patterns to detect fraud or abuse.</li>
+                                <li>Comply with legal obligations and enforce our Terms.</li>
+                            </ul>
+                            <div class="highlight-box">
+                                <p><i class="fas fa-info-circle text-primary me-2"></i> We will never sell your personal information to third parties for their marketing purposes.</p>
+                            </div>
+                        </div>
+
+                        <div class="terms-section" id="data-sharing">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-share-alt"></i></span>
+                                3. Data Sharing
+                            </h3>
+                            <p>We may share your information with:</p>
+                            <ul>
+                                <li><strong>Service Providers:</strong> Your name, address, and booking details are shared with the assigned professional to deliver the service.</li>
+                                <li><strong>Payment Processors:</strong> Secure payment partners to process your transactions.</li>
+                                <li><strong>Legal Authorities:</strong> When required by law, regulation, or legal process.</li>
+                                <li><strong>Analytics Partners:</strong> Anonymized data to help us understand platform usage.</li>
+                            </ul>
+                            <div class="highlight-box warning">
+                                <p><i class="fas fa-lock text-warning me-2"></i> We use industry-standard encryption and security protocols. Service providers only receive the minimum information necessary to complete your booking.</p>
+                            </div>
+                        </div>
+
+                        <div class="terms-section" id="data-security">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-lock"></i></span>
+                                4. Data Security
+                            </h3>
+                            <p>
+                                We implement robust security measures to protect your personal information, including:
+                            </p>
+                            <ul>
+                                <li>SSL/TLS encryption for all data in transit.</li>
+                                <li>Encrypted storage for sensitive data at rest.</li>
+                                <li>Regular security audits and vulnerability assessments.</li>
+                                <li>Access controls limiting employee access to personal data on a need-to-know basis.</li>
+                            </ul>
+                            <p>
+                                While we strive to protect your information, no method of electronic storage is 100% secure. We encourage you to use strong passwords and protect your account credentials.
+                            </p>
+                        </div>
+
+                        <div class="terms-section" id="cookies">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-cookie-bite"></i></span>
+                                5. Cookies & Tracking
+                            </h3>
+                            <p>Our platform uses cookies and similar tracking technologies to:</p>
+                            <ul>
+                                <li>Remember your login session and preferences.</li>
+                                <li>Analyze website traffic and usage patterns.</li>
+                                <li>Deliver personalized content and recommendations.</li>
+                                <li>Serve relevant advertisements.</li>
+                            </ul>
+                            <p>
+                                You can control cookie settings through your browser preferences. Disabling cookies may affect certain features of the Service.
+                            </p>
+                        </div>
+
+                        <div class="terms-section" id="your-rights">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-user-shield"></i></span>
+                                6. Your Rights
+                            </h3>
+                            <p>You have the right to:</p>
+                            <ul>
+                                <li><strong>Access:</strong> Request a copy of the personal data we hold about you.</li>
+                                <li><strong>Correction:</strong> Request correction of inaccurate or incomplete data.</li>
+                                <li><strong>Deletion:</strong> Request deletion of your personal data, subject to legal retention requirements.</li>
+                                <li><strong>Opt-Out:</strong> Unsubscribe from marketing communications at any time.</li>
+                                <li><strong>Data Portability:</strong> Request your data in a structured, machine-readable format.</li>
+                            </ul>
+                            <p>
+                                To exercise any of these rights, please contact us at <a href="mailto:privacy@ondemandhome.com" class="text-primary fw-bold">privacy@ondemandhome.com</a>.
+                            </p>
+                        </div>
+
+                        <div class="terms-section" id="data-retention">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-archive"></i></span>
+                                7. Data Retention
+                            </h3>
+                            <p>
+                                We retain your personal information only for as long as necessary to fulfill the purposes described in this Privacy Policy, unless a longer retention period is required by law. Specifically:
+                            </p>
+                            <ul>
+                                <li><strong>Account data:</strong> Retained while your account is active and for up to 2 years after deletion.</li>
+                                <li><strong>Transaction records:</strong> Retained for 5 years for tax and legal compliance.</li>
+                                <li><strong>Usage logs:</strong> Retained for up to 1 year for analytics and security purposes.</li>
+                            </ul>
+                        </div>
+
+                        <div class="terms-section" id="contact-privacy">
+                            <h3>
+                                <span class="section-icon"><i class="fas fa-envelope"></i></span>
+                                8. Contact Us
+                            </h3>
+                            <p>
+                                If you have any questions or concerns about this Privacy Policy, please contact our Data Protection Officer:
+                            </p>
+                            <div class="highlight-box">
+                                <p class="mb-1"><strong>OnDemand Home Services Pvt. Ltd.</strong></p>
+                                <p class="mb-1"><i class="fas fa-map-marker-alt text-primary me-2"></i> 123 Service Lane, Tech Park, Bangalore, Karnataka 560001</p>
+                                <p class="mb-1"><i class="fas fa-envelope text-primary me-2"></i> privacy@ondemandhome.com</p>
+                                <p class="mb-0"><i class="fas fa-phone text-primary me-2"></i> +91 1800-123-4567 (Toll Free)</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- ACCEPT SECTION -->
+        <!-- ========================================= -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="accept-section">
+                    <i class="fas fa-check-circle mb-3" style="font-size: 3rem; opacity: 0.8;"></i>
+                    <h4 class="fw-bold mb-3">By using our platform, you acknowledge that you have read and agree to these terms.</h4>
+                    <p class="mb-4" style="opacity: 0.85;">If you have any questions, feel free to reach out to our support team.</p>
+                    <button class="btn btn-accept btn-lg" onclick="acceptTerms()">
+                        <i class="fas fa-thumbs-up me-2"></i>I Accept the Terms
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Scroll to Top Button -->
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+@section Scripts {
+    <script>
+        // ==============================
+        // Tab Switching
+        // ==============================
+        function switchTab(el) {
+            // Remove active from all tabs
+            document.querySelectorAll('.policy-tab').forEach(tab => tab.classList.remove('active'));
+            el.classList.add('active');
+
+            const target = el.getAttribute('data-target');
+
+            // Hide all content
+            document.getElementById('termsContent').style.display = 'none';
+            document.getElementById('privacyContent').style.display = 'none';
+            document.getElementById('tocTerms').style.display = 'none';
+            document.getElementById('tocPrivacy').style.display = 'none';
+
+            // Show selected
+            document.querySelector(target).style.display = 'block';
+
+            // Show matching TOC
+            if (target === '#termsContent') {
+                document.getElementById('tocTerms').style.display = 'block';
+            } else {
+                document.getElementById('tocPrivacy').style.display = 'block';
+            }
+
+            // Scroll to top of content
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+
+        // ==============================
+        // Smooth Scroll to Section
+        // ==============================
+        function scrollToSection(event, sectionId) {
+            event.preventDefault();
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const yOffset = -80;
+                const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+
+                // Highlight active TOC link
+                document.querySelectorAll('.toc-link').forEach(link => link.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+        }
+
+        // ==============================
+        // Scroll to Top
+        // ==============================
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.addEventListener('scroll', function () {
+            const btn = document.getElementById('scrollTopBtn');
+            if (window.scrollY > 400) {
+                btn.style.display = 'flex';
+                btn.style.alignItems = 'center';
+                btn.style.justifyContent = 'center';
+            } else {
+                btn.style.display = 'none';
+            }
+        });
+
+        // ==============================
+        // Active TOC on Scroll
+        // ==============================
+        window.addEventListener('scroll', function () {
+            const sections = document.querySelectorAll('.terms-section');
+            const tocLinks = document.querySelectorAll('.toc-link');
+
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 120;
+                if (window.pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // ==============================
+        // Accept Terms (Demo)
+        // ==============================
+        function acceptTerms() {
+            const btn = event.target.closest('.btn-accept');
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Accepted!';
+            btn.style.background = '#22c55e';
+            btn.style.color = '#fff';
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-thumbs-up me-2"></i>I Accept the Terms';
+                btn.style.background = '#fff';
+                btn.style.color = '#4e73df';
+            }, 2500);
+        }
+    </script>
+}

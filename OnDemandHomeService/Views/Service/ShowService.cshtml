@@ -1,0 +1,169 @@
+﻿@model OnDemandHomeService.ViewModels.ServiceVM
+
+@{
+    ViewData["Title"] = "Service Management";
+}
+
+<h2 class="mb-3">Service Management</h2>
+
+<div class="row">
+
+    <!-- LEFT SIDE: ADD / EDIT SERVICE -->
+    <div class="col-md-4">
+
+        <div class="card shadow p-3">
+
+            <h4 class="mb-3">
+                @(Model.IsEdit ? "Edit Service" : "Add Service")
+            </h4>
+
+            <form asp-action="Save" method="post">
+
+                <input type="hidden" asp-for="NewService.ServiceId" />
+
+                <!-- CATEGORY -->
+                <div class="mb-2">
+                    <label>Category</label>
+                    <select asp-for="NewService.CategoryId"
+                            asp-items="Model.CategoryList"
+                            class="form-control">
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+
+                <!-- NAME -->
+                <div class="mb-2">
+                    <input asp-for="NewService.ServiceName"
+                           class="form-control"
+                           placeholder="Service Name" required/>
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="mb-2">
+                    <textarea asp-for="NewService.Description"
+                              class="form-control"
+                              placeholder="Description" required></textarea>
+                </div>
+
+                <!-- PRICE -->
+                <div class="mb-2">
+                    <input asp-for="NewService.BasePrice"
+                           class="form-control"
+                           placeholder="Enter Price" required/>
+                </div>
+
+                <!-- DURATION -->
+                <div class="mb-2">
+                    <input asp-for="NewService.DurationMinutes"
+                           class="form-control"
+                           placeholder="Duration (minutes)" required/>
+                </div>
+
+                <!-- ACTIVE -->
+                <div class="form-check mb-3">
+                    <input asp-for="NewService.IsActive"
+                           class="form-check-input" />
+                    <label class="form-check-label">Active Service</label>
+                </div>
+
+                <!-- BUTTONS -->
+                <button class="btn btn-primary w-100">
+                    @(Model.IsEdit ? "Update Service" : "Add Service")
+                </button>
+
+                @if (Model.IsEdit)
+                {
+                    <a href="/Service/ShowService"
+                       class="btn btn-secondary w-100 mt-2">
+                        Cancel Edit
+                    </a>
+                }
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDE: SERVICE LIST -->
+    <div class="col-md-8">
+
+        <div class="card shadow p-3">
+
+            <h4 class="mb-3">Service List</h4>
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Service</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                        <th width="180">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (!Model.Services.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">No services found</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Services)
+                        {
+                            <tr>
+                                <td>@item.ServiceName</td>
+                                <td>@item.Category?.CategoryName</td>
+                                <td>@item.Description</td>
+                                <td>@item.BasePrice.ToString("C")</td>
+                                <td>@item.DurationMinutes mins</td>
+                                <td>
+                                    @if (item.IsActive == true)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Inactive</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <!-- EDIT -->
+                                    <a href="/Service/ShowService/@item.ServiceId"
+                                       class="btn btn-warning btn-sm">
+                                        Edit
+                                    </a>
+
+                                    <!-- DELETE -->
+                                    <form asp-action="Delete"
+                                          method="post"
+                                          style="display:inline;">
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@item.ServiceId" />
+                                        <button type="submit"
+                                                class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Delete this service?')">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

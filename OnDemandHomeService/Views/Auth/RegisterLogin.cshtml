@@ -1,0 +1,1051 @@
+﻿@* @{
+    ViewData["Title"] = "Login / Register";
+    Layout = null; // Set to your layout path, e.g., "_Layout" if you have one
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - OnDemandHomeService</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- Base Styles --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* --- Main Container --- */
+        .main-container {
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            position: relative;
+            overflow: hidden;
+            width: 800px;
+            max-width: 100%;
+            min-height: 550px;
+        }
+
+        /* --- Form Container Styles --- */
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+        }
+
+        .sign-in-container {
+            left: 0;
+            width: 50%;
+            z-index: 2;
+        }
+
+        .sign-up-container {
+            left: 0;
+            width: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* --- The Slide Animation Logic --- */
+        /* When 'right-panel-active' is added, move sign-in to the right and fade it */
+        .main-container.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* Bring sign-up into view */
+        .main-container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+            animation: show 0.6s;
+        }
+
+        @@keyframes show {
+            0%, 49.99%
+
+        {
+            opacity: 0;
+            z-index: 1;
+        }
+
+        50%, 100% {
+            opacity: 1;
+            z-index: 5;
+        }
+
+        }
+
+        /* --- Overlay Container --- */
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .main-container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 0 0;
+            color: #FFFFFF;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .main-container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .main-container.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .main-container.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        /* --- Form Styling --- */
+        .form {
+            background-color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 50px;
+            height: 100%;
+            text-align: center;
+        }
+
+            .form h2 {
+                font-weight: bold;
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+            .form input, .form select {
+                background-color: #f3f3f3;
+                border: none;
+                padding: 12px 15px;
+                margin: 8px 0;
+                width: 100%;
+                border-radius: 5px;
+                transition: all 0.3s ease;
+            }
+
+                .form input:focus, .form select:focus {
+                    outline: none;
+                    background-color: #fff;
+                    box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+                }
+
+        .btn-submit {
+            border-radius: 20px;
+            border: 1px solid #667eea;
+            background-color: #667eea;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 12px 45px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: transform 80ms ease-in;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+            .btn-submit:hover {
+                background-color: #764ba2;
+                border-color: #764ba2;
+                transform: scale(1.02);
+            }
+
+            .btn-submit:active {
+                transform: scale(0.95);
+            }
+
+            .btn-submit:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+
+        .ghost {
+            background-color: transparent;
+            border-color: #FFFFFF;
+        }
+
+        /* --- Social Icons --- */
+        .social-container {
+            margin: 20px 0;
+        }
+
+            .social-container a {
+                border: 1px solid #DDDDDD;
+                border-radius: 50%;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 5px;
+                height: 40px;
+                width: 40px;
+                color: #333;
+                transition: all 0.3s ease;
+            }
+
+                .social-container a:hover {
+                    background-color: #667eea;
+                    color: #fff;
+                    border-color: #667eea;
+                }
+
+        /* --- Validation & Feedback --- */
+        .text-danger {
+            font-size: 0.8rem;
+            color: #e74c3c;
+            display: none; /* Hidden by default, shown via JS */
+        }
+
+        .validation-summary-valid {
+            display: none;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .main-container
+
+        {
+            min-height: auto;
+        }
+        /* Mobile adjustments could stack forms if desired, but for simplicity we scale down */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container" id="container">
+
+        <!-- Register Form -->
+        <div class="form-container sign-up-container">
+            <form id="registerForm" class="form">
+                <h2>Create Account</h2>
+                <div id="regMsg" class="mt-2"></div>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your email for registration</span>
+
+                <input type="text" name="FullName" placeholder="Full Name" required />
+                <input type="email" name="Email" placeholder="Email" required />
+                <input type="text" name="Phone" placeholder="Phone Number" required />
+                <input type="password" name="Password" placeholder="Password" required />
+
+                <select name="RoleId" required>
+                    <option value="">Select Role</option>
+                    <option value="1">Customer</option>
+                    <option value="2">Service Provider</option>
+                    <!-- Admin usually not self-registered -->
+                </select>
+
+                <button type="submit" class="btn-submit">Sign Up</button>
+               
+            </form>
+        </div>
+
+        <!-- Login Form -->
+        <div class="form-container sign-in-container">
+            <form id="loginForm" class="form">
+                <h2>Sign in</h2>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your account</span>
+
+                <input type="email" name="Email" placeholder="Email" required />
+                <input type="password" name="Password" placeholder="Password" required />
+
+                <a href="#" class="mt-2" style="text-decoration:none; font-size:0.9rem; color:#667eea;">Forgot your password?</a>
+
+                <button type="submit" class="btn-submit">Sign In</button>
+                <div id="loginMsg" class="mt-2"></div>
+            </form>
+        </div>
+
+        <!-- Overlay -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost btn-submit" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start your journey with us</p>
+                    <button class="ghost btn-submit" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // --- UI Animation Logic ---
+            const signUpButton = $('#signUp');
+            const signInButton = $('#signIn');
+            const container = $('#container');
+
+            signUpButton.on('click', () => {
+                container.addClass('right-panel-active');
+            });
+
+            signInButton.on('click', () => {
+                container.removeClass('right-panel-active');
+            });
+
+            // --- AJAX Login ---
+            $("#loginForm").on('submit', function (e) {
+                e.preventDefault();
+                var btn = $(this).find("button[type='submit']");
+                var originalText = btn.text();
+
+                btn.prop('disabled', true).text("Signing In...");
+                $("#loginMsg").html('');
+
+                $.ajax({
+                    url: '@Url.Action("Login", "Auth")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (res) {
+                        if (res.success) {
+                            $("#loginMsg").html('<span style="color:green;">Login Successful! Redirecting...</span>');
+                            setTimeout(() => { window.location.href = res.redirect; }, 500);
+                        } else {
+                            $("#loginMsg").html('<span style="color:red;">' + res.message + '</span>');
+                            btn.prop('disabled', false).text(originalText);
+                        }
+                    },
+                    error: function () {
+                        $("#loginMsg").html('<span style="color:red;">An error occurred.</span>');
+                        btn.prop('disabled', false).text(originalText);
+                    }
+                });
+            });
+
+            // --- AJAX Register ---
+            $("#registerForm").on('submit', function (e) {
+                e.preventDefault();
+                var btn = $(this).find("button[type='submit']");
+                var originalText = btn.text();
+
+                btn.prop('disabled', true).text("Creating Account...");
+                $("#regMsg").html('');
+
+                $.ajax({
+                    url: '@Url.Action("Register", "Auth")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (res) {
+                        if (res.success) {
+                            $("#regMsg").html('<span style="color:green;">Registration Successful! Please Login.</span>');
+                            // Clear form
+                            $("#registerForm")[0].reset();
+                            // Switch to login panel after 1 second
+                            setTimeout(() => {
+                                container.removeClass('right-panel-active');
+                            }, 1000);
+                        } else {
+                            $("#regMsg").html('<span style="color:red;">' + res.message + '</span>');
+                        }
+                        btn.prop('disabled', false).text(originalText);
+                    },
+                    error: function () {
+                        $("#regMsg").html('<span style="color:red;">An error occurred.</span>');
+                        btn.prop('disabled', false).text(originalText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> *@
+@{
+    ViewData["Title"] = "Login / Register";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - OnDemandHomeService</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .main-container {
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            position: relative;
+            overflow: hidden;
+            width: 900px;
+            max-width: 100%;
+            min-height: 580px;
+        }
+
+        /* ===== FORM CONTAINERS ===== */
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transition: all 0.6s ease-in-out;
+        }
+
+        .sign-in-container {
+            left: 0;
+            z-index: 2;
+        }
+
+        .sign-up-container {
+            left: 0;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* --- Active States: Sign Up shown --- */
+        .main-container.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .main-container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+            animation: showPanel 0.6s ease-in-out;
+        }
+
+        @@keyframes showPanel {
+            0%, 49.99%
+
+        {
+            opacity: 0;
+            z-index: 1;
+        }
+
+        50%, 100% {
+            opacity: 1;
+            z-index: 5;
+        }
+
+        }
+
+        /* ===== OVERLAY ===== */
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .main-container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: #fff;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .main-container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 30px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .main-container.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .main-container.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        /* ===== FORM STYLING ===== */
+        .form {
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            height: 100%;
+            text-align: center;
+            overflow-y: auto;
+        }
+
+            .form h2 {
+                font-weight: bold;
+                margin-bottom: 12px;
+                color: #333;
+                font-size: 1.6rem;
+            }
+
+            .form input, .form select {
+                background-color: #f3f3f3;
+                border: none;
+                padding: 12px 15px;
+                margin: 6px 0;
+                width: 100%;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                font-size: 0.9rem;
+            }
+
+                .form input:focus, .form select:focus {
+                    outline: none;
+                    background-color: #fff;
+                    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+                }
+
+            .form select {
+                cursor: pointer;
+                appearance: auto;
+            }
+
+        /* ===== BUTTONS ===== */
+        .btn-submit {
+            border-radius: 25px;
+            border: 1px solid #667eea;
+            background-color: #667eea;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 12px 45px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+            .btn-submit:hover {
+                background-color: #764ba2;
+                border-color: #764ba2;
+                transform: scale(1.02);
+            }
+
+            .btn-submit:active {
+                transform: scale(0.95);
+            }
+
+            .btn-submit:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        .ghost {
+            background-color: transparent;
+            border-color: #fff;
+        }
+
+            .ghost:hover {
+                background-color: rgba(255,255,255,0.15);
+                border-color: #fff;
+            }
+
+        /* ===== SOCIAL ===== */
+        .social-container {
+            margin: 15px 0;
+        }
+
+            .social-container a {
+                border: 1px solid #ddd;
+                border-radius: 50%;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 5px;
+                height: 38px;
+                width: 38px;
+                color: #333;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                font-size: 0.9rem;
+            }
+
+                .social-container a:hover {
+                    background-color: #667eea;
+                    color: #fff;
+                    border-color: #667eea;
+                }
+
+        /* ===== OVERLAY TEXT ===== */
+        .overlay-panel h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .overlay-panel p {
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* ===== MSG AREAS ===== */
+        .form-msg {
+            min-height: 20px;
+            margin-top: 5px;
+            font-size: 0.85rem;
+        }
+
+        /* ============================================================
+                   MOBILE RESPONSIVE  (< 768px)
+                                      ============================================================ */
+        @@media (max-width: 768px) {
+            body
+
+        {
+            padding: 15px;
+            align-items: flex-start;
+            padding-top: 30px;
+        }
+
+        .main-container {
+            min-height: auto;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 16px;
+        }
+
+        /* --- Override: No side-by-side, stack everything --- */
+        .form-container {
+            position: relative;
+            width: 100%;
+            left: 0;
+            transform: none !important;
+            height: auto;
+            transition: none;
+        }
+
+        /* Hide the inactive form completely on mobile */
+        .sign-in-container,
+        .sign-up-container {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* Default: sign-in visible, sign-up hidden */
+        .sign-up-container {
+            display: none;
+        }
+
+        /* When sign-up is active on mobile */
+        .main-container.mobile-signup .sign-up-container {
+            display: block;
+        }
+
+        .main-container.mobile-signup .sign-in-container {
+            display: none;
+        }
+
+        /* --- Hide overlay on mobile, show toggle bar instead --- */
+        .overlay-container {
+            display: none;
+        }
+
+        /* --- Toggle Bar (mobile only) --- */
+        .mobile-toggle-bar {
+            display: flex !important;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border-radius: 16px 16px 0 0;
+            overflow: hidden;
+        }
+
+            .mobile-toggle-bar .toggle-btn {
+                flex: 1;
+                padding: 14px;
+                text-align: center;
+                font-weight: bold;
+                font-size: 0.95rem;
+                color: rgba(255,255,255,0.6);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: none;
+                background: transparent;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+                .mobile-toggle-bar .toggle-btn.active {
+                    color: #fff;
+                    background: rgba(255,255,255,0.15);
+                }
+
+        /* Form adjustments for mobile */
+        .form {
+            padding: 25px 30px;
+        }
+
+            .form h2 {
+                font-size: 1.4rem;
+                margin-bottom: 10px;
+            }
+
+            .form input, .form select {
+                padding: 11px 14px;
+                font-size: 0.85rem;
+            }
+
+        .btn-submit {
+            padding: 11px 30px;
+            font-size: 11px;
+        }
+
+        .social-container {
+            margin: 10px 0;
+        }
+
+            .social-container a {
+                height: 35px;
+                width: 35px;
+                font-size: 0.85rem;
+            }
+
+        .overlay-panel h1 {
+            font-size: 1.4rem;
+        }
+
+        .overlay-panel p {
+            font-size: 0.85rem;
+        }
+
+        }
+
+        /* ===== SMALL MOBILE (< 380px) ===== */
+        @@media (max-width: 380px) {
+            .form
+
+        {
+            padding: 20px 20px;
+        }
+
+        .form h2 {
+            font-size: 1.2rem;
+        }
+
+        .mobile-toggle-bar .toggle-btn {
+            padding: 12px;
+            font-size: 0.85rem;
+        }
+
+        }
+
+        /* ===== DESKTOP: hide mobile toggle bar ===== */
+        .mobile-toggle-bar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container" id="container">
+
+        <!-- Mobile Toggle Bar (visible only on small screens) -->
+        <div class="mobile-toggle-bar">
+            <button class="toggle-btn active" data-target="signin">Sign In</button>
+            <button class="toggle-btn" data-target="signup">Sign Up</button>
+        </div>
+
+        <!-- Register Form -->
+        <div class="form-container sign-up-container">
+            <form id="registerForm" class="form">
+                <h2>Create Account</h2>
+                <div id="regMsg" class="form-msg"></div>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your email for registration</span>
+                <input type="text" name="FullName" placeholder="Full Name" required />
+                <input type="email" name="Email" placeholder="Email" required />
+                <input type="text" name="Phone" placeholder="Phone Number" required />
+                <input type="password" name="Password" placeholder="Password" required />
+                <select name="RoleId" required>
+                    <option value="">Select Role</option>
+                    <option value="1">Customer</option>
+                    <option value="2">Service Provider</option>
+                </select>
+                <button type="submit" class="btn-submit">Sign Up</button>
+            </form>
+        </div>
+
+        <!-- Login Form -->
+        <div class="form-container sign-in-container">
+            <form id="loginForm" class="form">
+                <h2>Sign In</h2>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your account</span>
+                <input type="email" name="Email" placeholder="Email" required />
+                <input type="password" name="Password" placeholder="Password" required />
+                <a href="#" class="mt-2" style="text-decoration:none; font-size:0.85rem; color:#667eea;">Forgot your password?</a>
+                <button type="submit" class="btn-submit">Sign In</button>
+                <div id="loginMsg" class="form-msg"></div>
+            </form>
+        </div>
+
+        <!-- Overlay (desktop only) -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost btn-submit" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start your journey with us</p>
+                    <button class="ghost btn-submit" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            const $container = $('#container');
+            const $mobileToggles = $('.mobile-toggle-bar .toggle-btn');
+            const isMobile = () => $(window).width() <= 768;
+
+            // ===== Switch to Sign Up =====
+            function showSignUp() {
+                if (isMobile()) {
+                    $container.addClass('mobile-signup');
+                    $container.removeClass('right-panel-active');
+                } else {
+                    $container.addClass('right-panel-active');
+                    $container.removeClass('mobile-signup');
+                }
+                $mobileToggles.removeClass('active');
+                $mobileToggles.filter('[data-target="signup"]').addClass('active');
+            }
+
+            // ===== Switch to Sign In =====
+            function showSignIn() {
+                if (isMobile()) {
+                    $container.removeClass('mobile-signup');
+                    $container.removeClass('right-panel-active');
+                } else {
+                    $container.removeClass('right-panel-active');
+                    $container.removeClass('mobile-signup');
+                }
+                $mobileToggles.removeClass('active');
+                $mobileToggles.filter('[data-target="signin"]').addClass('active');
+            }
+
+            // Desktop overlay buttons
+            $('#signUp').on('click', showSignUp);
+            $('#signIn').on('click', showSignIn);
+
+            // Mobile toggle bar buttons
+            $mobileToggles.on('click', function () {
+                const target = $(this).data('target');
+                if (target === 'signup') showSignUp();
+                else showSignIn();
+            });
+
+            // Handle resize: clean up classes when switching between mobile/desktop
+            $(window).on('resize', function () {
+                $container.removeClass('right-panel-active mobile-signup');
+                $mobileToggles.removeClass('active');
+                $mobileToggles.filter('[data-target="signin"]').addClass('active');
+            });
+
+            // ===== AJAX Login =====
+            $("#loginForm").on('submit', function (e) {
+                e.preventDefault();
+                const $btn = $(this).find("button[type='submit']");
+                const originalText = $btn.text();
+
+                $btn.prop('disabled', true).text("Signing In...");
+                $("#loginMsg").html('');
+
+                $.ajax({
+                    url: '@Url.Action("Login", "Auth")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (res) {
+                        if (res.success) {
+                            $("#loginMsg").html('<span style="color:green;">Login Successful! Redirecting...</span>');
+                            setTimeout(() => { window.location.href = res.redirect; }, 500);
+                        } else {
+                            $("#loginMsg").html('<span style="color:red;">' + res.message + '</span>');
+                            $btn.prop('disabled', false).text(originalText);
+                        }
+                    },
+                    error: function () {
+                        $("#loginMsg").html('<span style="color:red;">An error occurred. Please try again.</span>');
+                        $btn.prop('disabled', false).text(originalText);
+                    }
+                });
+            });
+
+            // ===== AJAX Register =====
+            $("#registerForm").on('submit', function (e) {
+                e.preventDefault();
+                const $btn = $(this).find("button[type='submit']");
+                const originalText = $btn.text();
+
+                $btn.prop('disabled', true).text("Creating Account...");
+                $("#regMsg").html('');
+
+                $.ajax({
+                    url: '@Url.Action("Register", "Auth")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (res) {
+                        if (res.success) {
+                            $("#regMsg").html('<span style="color:green;">Registration Successful! Redirecting to login...</span>');
+                            $("#registerForm")[0].reset();
+                            setTimeout(() => { showSignIn(); }, 1000);
+                        } else {
+                            $("#regMsg").html('<span style="color:red;">' + res.message + '</span>');
+                        }
+                        $btn.prop('disabled', false).text(originalText);
+                    },
+                    error: function () {
+                        $("#regMsg").html('<span style="color:red;">An error occurred. Please try again.</span>');
+                        $btn.prop('disabled', false).text(originalText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

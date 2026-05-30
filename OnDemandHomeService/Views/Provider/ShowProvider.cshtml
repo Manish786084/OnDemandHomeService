@@ -1,0 +1,116 @@
+﻿@model OnDemandHomeService.ViewModels.ProviderVM
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+
+    <!-- LEFT SIDE: Edit Form -->
+    <div class="col-md-4">
+        @if (Model.IsEdit)
+        {
+            <div class="card shadow p-3 mb-3">
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["Error"]</div>
+                }
+               
+
+                <h4>Edit Provider</h4>
+
+                <form asp-action="SaveProvider" method="post">
+                    <!-- Hidden ID for model binding -->
+                    <input type="hidden" asp-for="NewProvider.UserId" />
+
+                    <!-- Full Name -->
+                    <div class="mb-2">
+                        <input asp-for="NewProvider.FullName" class="form-control" placeholder="Full Name" required/>
+                        <span asp-validation-for="NewProvider.FullName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-2">
+                        <input asp-for="NewProvider.Email" class="form-control" placeholder="Email" required/>
+                        <span asp-validation-for="NewProvider.Email" class="text-danger"></span>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="mb-2">
+                        <input asp-for="NewProvider.Phone" class="form-control" placeholder="Phone" required/>
+                        <span asp-validation-for="NewProvider.Phone" class="text-danger"></span>
+                    </div>
+
+                    <!-- Active Checkbox -->
+                    <div class="form-check mb-2">
+                        <input type="hidden" name="NewProvider.IsActive" value="false" />
+                        <input  asp-for="NewProvider.IsActive" class="form-check-input" value="true" />
+                        <label class="form-check-label">Active</label>
+                    </div>
+
+                    <!-- Buttons -->
+                    <button class="btn btn-primary w-100">Update</button>
+                    <a href="/Provider/ShowProvider" class="btn btn-secondary w-100 mt-2">Cancel</a>
+                </form>
+            </div>
+        }
+        else
+        {
+            <div class="card shadow p-3 mb-3 text-center">
+                <p>Select a provider from the table to edit</p>
+            </div>
+        }
+    </div>
+
+    <!-- RIGHT SIDE: Providers Table -->
+    <div class="col-md-8">
+        <div class="card shadow p-3">
+            <h4>Providers</h4>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Providers)
+                    {
+                        <tr>
+                            <td>@item.FullName</td>
+                            <td>@item.Email</td>
+                            <td>@item.Phone</td>
+                            <td>
+                                <span class="badge @(item.IsActive==true ? "bg-success" : "bg-danger")">
+                                    @(item.IsActive==true ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td>
+                                <!-- Edit button -->
+                                <a href="@Url.Action("ShowProvider", "Provider", new { id = item.UserId })"
+                                   class="btn btn-warning btn-sm">Edit</a>
+
+                                <!-- Toggle Status form -->
+                                <form asp-action="ToggleStatus" method="post" style="display:inline">
+                                    <input type="hidden" name="id" value="@item.UserId" />
+                                    <button type="submit" class="btn btn-info btn-sm">
+                                        @(item.IsActive==true ? "Deactivate" : "Activate")
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

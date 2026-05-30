@@ -1,0 +1,668 @@
+﻿@* @model OnDemandHomeService.Models.Booking
+
+@{
+    Layout = "~/Views/Shared/_ProviderLayout.cshtml";
+    ViewData["Title"] = "Manage Booking";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h4>Booking Details</h4>
+        </div>
+
+        <div class="card-body">
+
+            <p>
+                <strong>Customer:</strong>
+                @Model.Customer.FullName
+            </p>
+
+            <p>
+                <strong>Phone:</strong>
+
+                <a href="tel:@Model.Customer.Phone"
+                   class="btn btn-success btn-sm ms-2">
+
+                    <i class="fas fa-phone"></i>
+                    @Model.Customer.Phone
+                </a>
+            </p>
+
+            <p>
+                <strong>Address:</strong>
+                @Model.Address.Street,
+                @Model.Address.City
+            </p>
+
+            <p>
+                <strong>Date:</strong>
+                @Model.BookingDate
+            </p>
+
+            <p>
+                <strong>Time:</strong>
+                @Model.TimeSlot.StartTime -
+                @Model.TimeSlot.EndTime
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                @Model.Status.StatusName
+            </p>
+
+            <p>
+                <strong>Amount:</strong>
+                ₹ @Model.TotalAmount
+            </p>
+
+            <hr />
+
+            <h5>Services</h5>
+
+            <ul>
+                @foreach (var item in Model.BookingDetails)
+                {
+                    <li>
+                        @item.Service.ServiceName
+                    </li>
+                }
+            </ul>
+
+            <hr />
+
+            <!-- ACCEPT -->
+            @if (Model.StatusId == 1)
+            {
+                <form asp-action="Accept" method="post" style="display:inline">
+                    <input type="hidden" name="id" value="@Model.BookingId" />
+
+                    <button class="btn btn-success">
+                        Accept
+                    </button>
+                </form>
+
+                <form asp-action="Cancel" method="post" style="display:inline">
+                    <input type="hidden" name="id" value="@Model.BookingId" />
+
+                    <button class="btn btn-danger">
+                        Cancel
+                    </button>
+                </form>
+            }
+
+            <!-- COMPLETE -->
+            @if (Model.StatusId == 2)
+            {
+                <form asp-action="Complete" method="post">
+                    <input type="hidden" name="id" value="@Model.BookingId" />
+
+                    <button class="btn btn-primary">
+                        Complete Service
+                    </button>
+                </form>
+            }
+            @if (Model.Status.StatusName != "Paid")
+            {
+               <p class="text-muted">Action Required</p>
+            }
+
+        </div>
+    </div>
+
+</div> *@
+ @model OnDemandHomeService.Models.Booking
+
+@{
+    Layout = "~/Views/Shared/_ProviderLayout.cshtml";
+    ViewData["Title"] = "Manage Booking";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Booking | Provider Dashboard</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Color Palette */
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --warning: #f59e0b;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --border-radius: 16px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* Header Area */
+        .page-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Card Styling */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .card-header h4 {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin: 0;
+            }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+            .status-badge.pending {
+                background-color: var(--warning);
+                color: #fff;
+                border: none;
+            }
+
+            .status-badge.accepted {
+                background-color: var(--success);
+                color: #fff;
+                border: none;
+            }
+
+            .status-badge.completed {
+                background-color: var(--primary);
+                color: #fff;
+                border: none;
+            }
+
+            .status-badge.cancelled {
+                background-color: var(--danger);
+                color: #fff;
+                border: none;
+            }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Hero Section (Customer + Amount) */
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 2rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: #e0e7ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            object-fit: cover;
+        }
+
+        .customer-details h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .price-tag {
+            text-align: right;
+        }
+
+        .price-label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .price-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Details Grid */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .detail-link {
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: color 0.2s;
+        }
+
+            .detail-link:hover {
+                color: var(--primary);
+            }
+
+        /* Phone Button Special Style */
+        .phone-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            width: fit-content;
+        }
+
+            .phone-btn:hover {
+                background-color: var(--success);
+                color: white;
+                transform: translateY(-2px);
+            }
+
+        /* Address Block */
+        .address-block {
+            grid-column: 1 / -1;
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Services Section */
+        .services-section {
+            margin-bottom: 2rem;
+        }
+
+        .services-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .services-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            color: var(--text-dark);
+            padding: 0.5rem;
+            background-color: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .service-icon {
+            color: var(--primary);
+            background: #e0e7ff;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* Actions Footer */
+        .card-footer {
+            background-color: #f9fafb;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
+        }
+
+            .btn-success:hover {
+                background-color: var(--success-hover);
+                transform: translateY(-1px);
+            }
+
+        .btn-danger {
+            background-color: white;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+            .btn-danger:hover {
+                background-color: #fef2f2;
+            }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4);
+        }
+
+            .btn-primary:hover {
+                background-color: var(--primary-dark);
+                transform: translateY(-1px);
+            }
+
+        .alert-text {
+            color: var(--danger);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .hero-section
+
+        {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .customer-info {
+            flex-direction: column;
+        }
+
+        .price-tag {
+            text-align: center;
+        }
+
+        .card-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .action-group {
+            flex-direction: column;
+        }
+
+        .phone-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Page Title -->
+        
+
+        <!-- Main Card -->
+        <div class="card">
+
+            <!-- Card Header -->
+            <div class="card-header">
+                <h4><i class="fas fa-calendar-check me-2"></i> Booking #@Model.BookingId</h4>
+
+                <!-- Razor Logic for Status Badge Class -->
+                <!--
+                @{
+                        string statusClass = "pending"; // Default
+                        if (Model.StatusId == 2) statusClass = "accepted";
+                        if (Model.StatusId == 5) statusClass = "cancelled";
+                        if (Model.StatusId == 4) statusClass = "completed";
+                }
+                -->
+                <!-- Example Static Render: -->
+                <span class="status-badge pending">
+                    @Model.Status.StatusName
+                </span>
+            </div>
+
+            <div class="card-body">
+
+                <!-- Customer & Amount Hero -->
+                <div class="hero-section">
+                    <div class="customer-info">
+                        <img src="https://picsum.photos/seed/@Model.Customer.FullName/200/200" alt="Avatar" class="avatar">
+                        <div class="customer-details">
+                            <h2>@Model.Customer.FullName</h2>
+                            <a href="tel:@Model.Customer.Phone" class="phone-btn">
+                                <i class="fas fa-phone-alt"></i>
+                                @Model.Customer.Phone
+                            </a>
+                        </div>
+                    </div>
+                    <div class="price-tag">
+                        <div class="price-label">Total Amount</div>
+                        <div class="price-amount">₹ @Model.TotalAmount</div>
+                    </div>
+                </div>
+
+                <!-- Details Grid -->
+                <div class="details-grid">
+
+                    <!-- Date & Time -->
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="far fa-clock"></i> Date & Time</span>
+                        <div class="detail-value">
+                            @Model.BookingDate.ToString("MMM dd, yyyy") <br>
+                            <span style="font-weight:400; color:var(--text-gray)">
+                                @Model.TimeSlot.StartTime - @Model.TimeSlot.EndTime
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Services -->
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-tools"></i> Services Requested</span>
+                        <div class="services-list" style="margin-top: 0.5rem;">
+                            @foreach (var item in Model.BookingDetails)
+                            {
+                                <li class="service-item">
+                                    <div class="service-icon"><i class="fas fa-check"></i></div>
+                                    @item.Service.ServiceName
+                                </li>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Address (Full Width inside Grid) -->
+                    <div class="address-block detail-item">
+                        <span class="detail-label"><i class="fas fa-map-marker-alt"></i> Service Address</span>
+                        <div class="detail-value">
+                            @Model.Address.Street, @Model.Address.City, @Model.Address.State
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Action Footer -->
+            <div class="card-footer">
+
+                <!-- Notification Logic -->
+                @if (Model.Status.StatusName != "Paid")
+                {
+                    <div class="alert-text">
+                        <i class="fas fa-exclamation-circle"></i> Action Required
+                    </div>
+                }
+                else
+                {
+                    <div><!-- Spacer --></div>
+                }
+
+                <!-- Buttons Logic -->
+                <div class="action-group">
+
+                    <!-- ACCEPT / CANCEL (StatusId == 1) -->
+                    @if (Model.StatusId == 1)
+                    {
+                        <form asp-action="Cancel" method="post">
+                            <input type="hidden" name="id" value="@Model.BookingId" />
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </form>
+
+                        <form asp-action="Accept" method="post">
+                            <input type="hidden" name="id" value="@Model.BookingId" />
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check"></i> Accept Booking
+                            </button>
+                        </form>
+                    }
+
+                    <!-- COMPLETE (StatusId == 2) -->
+                    @if (Model.StatusId == 2)
+                    {
+                        <form asp-action="Complete" method="post">
+                            <input type="hidden" name="id" value="@Model.BookingId" />
+                            <button class="btn btn-primary">
+                                <i class="fas fa-flag-checkered"></i> Complete Service
+                            </button>
+                        </form>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

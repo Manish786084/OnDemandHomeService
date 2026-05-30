@@ -1,0 +1,290 @@
+﻿@model OnDemandHomeService.ViewModels.AdminDashboardVM
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Service Dashboard";
+}
+
+<!-- SECTION 1: KEY METRICS CARDS -->
+<div class="row">
+    <!-- Pending Requests (Urgent) -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            New Requests
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.NewRequests</div>
+                        <div class="mt-1"><small class="text-danger"><i class="fas fa-clock"></i> Action Required</small></div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-bell fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Jobs -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Ongoing Jobs
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.OngoingJobs</div>
+                        <div class="mt-1"><small class="text-success"><i class="fas fa-tools"></i> In Progress</small></div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-wrench fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Providers -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Active Providers
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ActiveProviders</div>
+                        <div class="mt-1"><small class="text-muted">Online Now</small></div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Today's Revenue
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">₹@Model.TodayRevenue</div>
+                        <div class="mt-1"><small class="text-success"><i class="fas fa-arrow-up"></i> +12% from yesterday</small></div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 2: OPERATIONAL DATA -->
+<div class="row">
+    <!-- Live Booking Requests Table -->
+    <div class="col-xl-8 col-lg-7 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Recent Booking Requests</h6>
+                <a href="#" class="btn btn-sm btn-primary shadow-sm"><i class="fas fa-eye fa-sm text-white-50"></i> View All</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Service</th>
+                                <th>Customer</th>
+                                <th>Provider</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.RecentBookings)
+                            {
+                                <tr>
+                                    <td>#BK-@item.BookingId</td>
+
+                                    <td>
+                                        @(item.BookingDetails.FirstOrDefault()?.Service?.ServiceName)
+                                    </td>
+
+                                    <td>@item.Customer.FullName</td>
+
+                                    <td>
+                                        @(item.Provider != null
+                                         ? item.Provider.FullName
+                                             : "Unassigned")
+                                </td>
+
+                                    <td>
+                                    @if (@item.Status.StatusName=="Accepted")
+                                    {
+                                        <span class="badge bg-info">
+                                            @item.Status.StatusName
+                                        </span>
+                                    }
+                                    else if (@item.Status.StatusName == "Paid")
+                                    {
+                                            <span class="badge bg-secondary">
+                                                @item.Status.StatusName
+                                            </span>
+                                    }
+                                    else if (@item.Status.StatusName == "Cancelled")
+                                        {
+                                            <span class="badge bg-danger">
+                                                @item.Status.StatusName
+                                            </span>
+                                    }
+                                        else if (@item.Status.StatusName == "Pending")
+                                        {
+                                            <span class="badge bg-warning">
+                                                @item.Status.StatusName
+                                            </span>
+                                        }
+                                        else if (@item.Status.StatusName == "Completed")
+                                        {
+                                            <span class="badge bg-success">
+                                                @item.Status.StatusName
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td>
+                                        <a href="#" class="btn btn-info btn-sm">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                                                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Top Providers & Categories -->
+    <div class="col-xl-4 col-lg-5 mb-4">
+        <!-- Top Service Providers -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Top Providers (This Week)</h6>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    @foreach (var item in Model.TopProviders)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                            <div>
+                                @item.ProviderName (@item.ServiceName)
+                            </div>
+
+                            <span class="badge badge-primary badge-pill">
+                                @item.TotalJobs Jobs
+                            </span>
+
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <!-- Service Demand Chart -->
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Service Demand</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="serviceDemandChart" style="height: 200px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 3: USER GROWTH & MAP -->
+<div class="row">
+    <div class="col-xl-8 col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Bookings Overview (Monthly)</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="bookingTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Customer Ratings</h6>
+            </div>
+            <div class="card-body text-center">
+                <h1 class="display-4 font-weight-bold text-success">4.8 <i class="fas fa-star text-warning"></i></h1>
+                <p class="text-muted mb-0">Based on 1,250 reviews</p>
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <h5 class="mb-0">1,150</h5>
+                        <small class="text-success">Positive</small>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="mb-0">100</h5>
+                        <small class="text-danger">Negative</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Chart 1: Booking Trends
+        const ctxBooking = document.getElementById('bookingTrendChart').getContext('2d');
+        new Chart(ctxBooking, {
+            type: 'line',
+            data: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                datasets: [{
+                    label: "Bookings",
+                    backgroundColor: "rgba(78, 115, 223, 0.1)",
+                    borderColor: "rgba(78, 115, 223, 1)",
+                    data: [500, 800, 650, 1100, 900, 1250],
+                    tension: 0.3
+                }]
+            },
+            options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+
+        // Chart 2: Service Demand
+        const ctxService = document.getElementById('serviceDemandChart').getContext('2d');
+        new Chart(ctxService, {
+            type: 'doughnut',
+            data: {
+                labels: ["Cleaning", "Plumbing", "Electrician", "Painting", "Moving"],
+                datasets: [{
+                    data: [40, 20, 15, 15, 10],
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#858796'],
+                }]
+            },
+            options: { maintainAspectRatio: false }
+        });
+
+    </script>
+}

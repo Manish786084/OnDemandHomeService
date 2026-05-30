@@ -1,0 +1,111 @@
+﻿@model OnDemandHomeService.Models.User
+
+<div class="profile-card-container h-100">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+
+        <!-- Cover Area -->
+        <div class="profile-cover"
+             style="height: 90px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        </div>
+
+        <div class="card-body text-center pt-0 position-relative d-flex flex-column">
+
+            <!-- Avatar (Generated from FullName Initials) -->
+            <div class="avatar-wrapper mx-auto mb-2" style="margin-top: -45px;">
+                <!-- Using UI Avatars to generate initials since no Image property exists in Model -->
+                <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model.FullName)&background=random&size=100&bold=true"
+                     alt="@Model.FullName"
+                     class="rounded-circle shadow-lg border border-3 border-white"
+                     style="width: 90px; height: 90px; object-fit: cover;" />
+            </div>
+
+            <!-- User Info -->
+            <h5 class="fw-bold mb-0 text-dark">@Model.FullName</h5>
+            <p class="text-muted small mb-1">@Model.Email</p>
+
+            <!-- Role Badge -->
+            @if (Model.Role != null)
+            {
+                <span class="badge rounded-pill @(Model.RoleId == 2 ? "bg-success-subtle text-success" : "bg-primary-subtle text-primary") px-3 py-1 mb-3">
+                    <i class="bi bi-person-badge me-1"></i> @Model.Role.RoleName
+                </span>
+            }
+
+            <!-- Status Indicator -->
+            <div class="d-flex justify-content-center mb-3">
+                @if (Model.IsActive == true)
+                {
+                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                        <span class="flash-dot bg-success rounded-circle d-inline-block me-1" style="width:8px; height:8px;"></span> Online
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Offline</span>
+                }
+            </div>
+
+            <div class="mt-auto">
+                <hr class="my-2">
+
+                <!-- Dynamic Stats based on Role -->
+                <div class="d-flex justify-content-around text-center py-2">
+                    <!-- If Provider: Show Completed Jobs -->
+                    @if (Model.BookingProviders != null && Model.BookingProviders.Any())
+                    {
+                        <div class="px-2">
+                            <h6 class="mb-0 fw-bold">@Model.BookingProviders.Count</h6>
+                            <small class="text-muted">Jobs Done</small>
+                        </div>
+                        <div class="border-start px-3">
+                            <h6 class="mb-0 fw-bold">@Model.ReviewProviders.Count</h6>
+                            <small class="text-muted">Reviews</small>
+                        </div>
+                    }
+                    <!-- If Customer: Show Bookings -->
+                    else
+                    {
+                    <div class="px-2">
+                        <h6 class="mb-0 fw-bold">@(Model.BookingCustomers?.Count ?? 0)</h6>
+                        <small class="text-muted">Bookings</small>
+                    </div>
+                    <div class="border-start px-3">
+                        <h6 class="mb-0 fw-bold">@(Model.Addresses?.Count ?? 0)</h6>
+                        <small class="text-muted">Addresses</small>
+                    </div>
+                    }
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2 mt-3">
+                    <a href="#" class="btn btn-outline-primary btn-sm rounded-pill">
+                        <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                    </a>
+                    <a href="tel:@Model.Phone" class="btn btn-light btn-sm rounded-pill text-dark">
+                        <i class="bi bi-telephone-fill me-1"></i> @Model.Phone
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .flash-dot {
+        animation: flash 1.5s infinite;
+    }
+
+    @@keyframes flash {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+</style>

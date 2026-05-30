@@ -1,0 +1,400 @@
+﻿
+@model List<OnDemandHomeService.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+@section Styles {
+    <style>
+        /* Page Background */
+        .bookings-page-bg {
+            background: #f8f9fc;
+            min-height: 100vh;
+            padding-top: 50px;
+            padding-bottom: 20px;
+        }
+
+        /* Main Card */
+        .bookings-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(78, 115, 223, 0.08);
+            overflow: hidden;
+            background: #fff;
+        }
+
+        /* Card Header */
+        .bookings-header {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            padding: 30px 40px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Modern Table Styling */
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 0;
+        }
+
+            .modern-table thead th {
+                background: #f8f9fc;
+                border-bottom: 2px solid #e3e6f0;
+                color: #5a5c69;
+                font-weight: 700;
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+                padding: 20px 25px;
+                border-top: none;
+            }
+
+            .modern-table tbody tr {
+                transition: all 0.3s ease;
+                opacity: 0;
+                transform: translateY(20px);
+                animation: rowFadeIn 0.5s forwards;
+            }
+
+                .modern-table tbody tr:hover {
+                    background-color: rgba(78, 115, 223, 0.04);
+                    transform: scale(1.005);
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+                }
+
+            .modern-table tbody td {
+                padding: 20px 25px;
+                vertical-align: middle;
+                border-bottom: 1px solid #f1f1f1;
+                color: #3a3b45;
+                font-weight: 500;
+            }
+
+            .modern-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+        @@keyframes rowFadeIn {
+            to
+
+        {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        /* Status Badges */
+        .status-pill {
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            letter-spacing: 0.3px;
+        }
+
+            .status-pill::before {
+                content: '';
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                margin-right: 8px;
+                display: inline-block;
+            }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+            .status-pending::before {
+                background: #856404;
+                animation: pulse 2s infinite;
+            }
+
+        .status-confirmed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+            .status-confirmed::before {
+                background: #0c5460;
+            }
+
+        .status-accepted {
+            background: #d4edda;
+            color: #155724;
+        }
+
+            .status-accepted::before {
+                background: #155724;
+                animation: pulse 2s infinite;
+            }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+            .status-completed::before {
+                background: #155724;
+            }
+
+        .status-default {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+            .status-default::before {
+                background: #383d41;
+            }
+
+        @@keyframes pulse {
+            0%
+
+        {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.5;
+            transform: scale(1.5);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-cancel-action {
+            background: #ffeaea;
+            color: #dc3545;
+        }
+
+            .btn-cancel-action:hover {
+                background: #dc3545;
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+            }
+
+        .btn-pay-action {
+            background: linear-gradient(135deg, #28a745 0%, #208f3a 100%);
+            color: white;
+        }
+
+            .btn-pay-action:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+                color: white;
+            }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+            .empty-state i {
+                font-size: 4rem;
+                color: #d1d3e2;
+                margin-bottom: 20px;
+            }
+
+        /* Mobile Adjustments */
+        @@media (max-width: 768px) {
+            .bookings-header {
+                padding: 20px;
+            }
+
+            .modern-table thead th, .modern-table tbody td {
+                padding: 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+}
+
+<!-- ========================================= -->
+<!-- BOOKINGS PAGE LAYOUT -->
+<!-- ========================================= -->
+<div class="bookings-page-bg">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12 col-xl-11">
+
+                <div class="card bookings-card">
+
+                    <!-- Header -->
+                    <div class="bookings-header">
+                        <div>
+                            <h3 class="fw-bold mb-0"><i class="fas fa-calendar-check me-2"></i> My Bookings</h3>
+                            <p class="mb-0 mt-1 small" style="opacity: 0.8;">Track and manage your service appointments</p>
+                        </div>
+                        <div class="d-none d-md-block">
+                            <span class="bg-white bg-opacity-20 text-white px-3 py-1 rounded-pill fw-bold">
+                                @Model.Count Active
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Table Container -->
+                    <div class="table-responsive">
+
+                        @if (Model.Any())
+                        {
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Date</th>
+                                        <th>Time Slot</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                        <th>Review</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.Count; i++)
+                                    {
+                                        var b = Model[i];
+                                        // Stagger animation delay for rows
+                                        var delay = $"{i * 0.1}s";
+
+                                        <tr style="animation-delay: @delay">
+                                            <!-- Service Name -->
+                                            <td>
+                                                <div class="fw-bold text-dark">
+                                                    @foreach (var d in b.BookingDetails)
+                                                    {
+                                                        <div>@d.Service.ServiceName</div>
+                                                    }
+                                                </div>
+                                            </td>
+
+                                            <!-- Date -->
+                                            <td>
+                                                <i class="fas fa-calendar-day me-1 text-muted small"></i>
+                                                @b.BookingDate.ToString("dd MMM, yyyy")
+                                            </td>
+
+                                            <!-- Time -->
+                                            <td>
+                                                <i class="fas fa-clock me-1 text-muted small"></i>
+                                                @b.TimeSlot?.StartTime - @b.TimeSlot?.EndTime
+                                            </td>
+
+                                            <!-- Amount -->
+                                            <td>
+                                                <span class="text-success fw-bold fs-6">₹ @b.TotalAmount</span>
+                                            </td>
+
+                                            <!-- Status -->
+                                            <td>
+                                                @{
+                                                    var statusName = b.Status?.StatusName ?? "Unknown";
+                                                    var statusClass = "status-default";
+                                                    var displayStatus = statusName;
+
+                                                    if (statusName == "Pending") { statusClass = "status-pending"; }
+                                                    else if (statusName == "Confirmed") { statusClass = "status-confirmed"; }
+                                                    else if (statusName == "Accepted") { statusClass = "status-accepted"; }
+                                                    else if (statusName == "Completed" || statusName == "Paid")
+                                                    {
+                                                        statusClass = "status-completed";
+                                                        displayStatus = "Completed";
+                                                    }
+                                                }
+                                                <span class="status-pill @statusClass">@displayStatus</span>
+                                            </td>
+
+                                            <!-- Action -->
+                                            <td>
+                                                @if (statusName == "Pending")
+                                                {
+                                                    <a asp-action="Cancel" asp-route-id="@b.BookingId" class="btn btn-action btn-cancel-action">
+                                                        <i class="fas fa-times me-1"></i> Cancel
+                                                    </a>
+                                                }
+                                                else if (statusName == "Completed")
+                                                {
+                                                    <a asp-action="Pay" asp-controller="ProviderService" asp-route-id="@b.BookingId" class="btn btn-action btn-pay-action">
+                                                        <i class="fas fa-credit-card me-1"></i> Pay Now
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted small">No Action</span>
+                                                }
+                                            </td>
+                                            <td>
+                                               
+                                                @if ((b.Status?.StatusName == "Paid")
+                                                                                        && !b.Reviews.Any())
+                                                {
+                                                    <a asp-action="GiveReview" asp-controller="Customer"
+                                                       asp-route-bookingId="@b.BookingId"
+                                                       asp-route-providerId="@b.ProviderId"
+                                                       class="btn btn-warning btn-sm">
+
+                                                        <i class="fas fa-star"></i> Review
+
+                                                    </a>
+                                                }
+                                                else if (b.Reviews.Any())
+                                                {
+                                                    <span class="badge bg-success">
+                                                        Reviewed
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted small">Not Available</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <!-- Empty State -->
+                            <div class="empty-state">
+                                <i class="fas fa-folder-open"></i>
+                                <h4 class="text-muted">No Bookings Found</h4>
+                                <p class="text-muted small">You haven't booked any services yet. Start exploring!</p>
+                                <a asp-controller="CustomerService" asp-action="UserServiceList" class="btn btn-primary mt-3">
+                                    <i class="fas fa-home me-2"></i>Browse Services
+                                </a>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

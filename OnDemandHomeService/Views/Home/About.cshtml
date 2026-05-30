@@ -1,0 +1,414 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "About Us";
+}
+
+@section Styles {
+    <style>
+        /* Hero Section - Same as Home */
+        .about-hero {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            min-height: 480px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+            margin-top: -80px;
+            padding-top: 80px;
+            border-radius: 0 0 50px 0;
+        }
+
+            .about-hero .hero-shape {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 150px;
+                background: #fff;
+                clip-path: polygon(0 100%, 100% 0, 100% 100%);
+            }
+
+            .about-hero h1 {
+                font-size: 3.5rem;
+                font-weight: 700;
+                margin-bottom: 20px;
+            }
+
+        /* Stats Counter */
+        .stats-section {
+            margin-top: -60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 35px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 15px 40px rgba(78, 115, 223, 0.15);
+            }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+            color: #fff;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #224abe;
+        }
+
+        /* Story Section */
+        .story-section img {
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Values */
+        .value-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 35px 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            height: 100%;
+        }
+
+            .value-card:hover {
+                transform: translateY(-10px);
+                border-color: var(--primary, #4e73df);
+                box-shadow: 0 15px 30px rgba(78, 115, 223, 0.1);
+            }
+
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--light-bg, #f8f9fc);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: var(--primary, #4e73df);
+            transition: all 0.3s;
+        }
+
+        .value-card:hover .value-icon {
+            background: var(--primary, #4e73df);
+            color: #fff;
+        }
+
+        /* Team */
+        .team-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+            .team-card:hover {
+                transform: scale(1.03);
+            }
+
+        .team-img {
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .team-card .card-body {
+            text-align: center;
+        }
+
+        .team-social a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--light-bg, #f8f9fc);
+            color: var(--primary, #4e73df);
+            margin: 0 4px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+            .team-social a:hover {
+                background: var(--primary, #4e73df);
+                color: #fff;
+            }
+
+        /* CTA Banner */
+        .cta-banner {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            border-radius: 20px;
+            padding: 60px 40px;
+            color: #fff;
+        }
+
+        @@media (max-width: 768px) {
+            .about-hero h1 {
+                font-size: 2rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+}
+
+<!-- ========================================= -->
+<!-- HERO SECTION -->
+<!-- ========================================= -->
+<section class="about-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1>We Make Home<br>Services Simple.</h1>
+                    <p class="lead mb-4">Trusted by thousands of homeowners, we connect you with verified professionals who deliver quality service — every single time.</p>
+                    <a asp-controller="CustomerService" asp-action="UserServiceList" class="btn btn-warning btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Services
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                     class="img-fluid"
+                     style="max-width: 380px; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));"
+                     alt="About Illustration">
+            </div>
+        </div>
+    </div>
+    <div class="hero-shape"></div>
+</section>
+
+<!-- ========================================= -->
+<!-- STATS SECTION -->
+<!-- ========================================= -->
+<section class="stats-section pb-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-number">15K+</div>
+                    <p class="text-muted mb-0">Happy Customers</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-hard-hat"></i></div>
+                    <div class="stat-number">850+</div>
+                    <p class="text-muted mb-0">Verified Professionals</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-number">25K+</div>
+                    <p class="text-muted mb-0">Jobs Completed</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="stat-number">50+</div>
+                    <p class="text-muted mb-0">Cities Covered</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- OUR STORY -->
+<!-- ========================================= -->
+<section class="py-5 story-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=80"
+                     class="img-fluid w-100"
+                     alt="Our Story">
+            </div>
+            <div class="col-lg-6">
+                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3">Our Story</span>
+                <h2 class="fw-bold mb-3">Built Out of Frustration.<br>Driven by Purpose.</h2>
+                <p class="text-muted">
+                    We started OnDemand Home Service because finding a reliable plumber or electrician
+                    was always a struggle — endless phone calls, uncertain pricing, and no accountability.
+                </p>
+                <p class="text-muted">
+                    Founded in 2022, we set out to build a platform that brings trust, transparency,
+                    and convenience to home services. Every professional on our platform is background-verified,
+                    skill-tested, and reviewed by real customers.
+                </p>
+                <div class="d-flex mt-4">
+                    <div class="me-4">
+                        <h4 class="fw-bold text-primary mb-0">2022</h4>
+                        <small class="text-muted">Founded</small>
+                    </div>
+                    <div class="me-4">
+                        <h4 class="fw-bold text-primary mb-0">50+</h4>
+                        <small class="text-muted">Cities</small>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold text-primary mb-0">99%</h4>
+                        <small class="text-muted">Satisfaction</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- OUR VALUES -->
+<!-- ========================================= -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <h2>What We Stand For</h2>
+            <p class="text-muted mt-3">Our core values guide everything we do</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="value-card">
+                    <div class="value-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h6 class="fw-bold">Trust & Safety</h6>
+                    <p class="text-muted small">Every professional is background-verified and insured for your peace of mind.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="value-card">
+                    <div class="value-icon"><i class="fas fa-tags"></i></div>
+                    <h6 class="fw-bold">Transparent Pricing</h6>
+                    <p class="text-muted small">No hidden charges. See upfront pricing before you book any service.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="value-card">
+                    <div class="value-icon"><i class="fas fa-clock"></i></div>
+                    <h6 class="fw-bold">On-Time Delivery</h6>
+                    <p class="text-muted small">Professionals arrive on time, every time. If they're late, the discount is on us.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="value-card">
+                    <div class="value-icon"><i class="fas fa-heart"></i></div>
+                    <h6 class="fw-bold">Customer First</h6>
+                    <p class="text-muted small">Our support team is available 7 days a week to help with any concern.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- TEAM SECTION -->
+<!-- ========================================= -->
+<section class="py-5">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <h2>Meet Our Team</h2>
+            <p class="text-muted mt-3">The people behind the platform</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card team-card">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                         class="card-img-top team-img" alt="Team Member">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-1">Manish Chauhan</h6>
+                        <p class="text-muted small mb-2">Founder & CEO</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card team-card">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                         class="card-img-top team-img" alt="Team Member">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-1">Priya Sharma</h6>
+                        <p class="text-muted small mb-2">Chief Technology Officer</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card team-card">
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                         class="card-img-top team-img" alt="Team Member">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-1">Rahul Verma</h6>
+                        <p class="text-muted small mb-2">Head of Operations</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card team-card">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                         class="card-img-top team-img" alt="Team Member">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-1">Sneha Patel</h6>
+                        <p class="text-muted small mb-2">Customer Success Lead</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- CTA BANNER -->
+<!-- ========================================= -->
+<section class="py-5">
+    <div class="container">
+        <div class="cta-banner text-center">
+            <h2 class="fw-bold mb-3">Ready to Book a Service?</h2>
+            <p class="lead mb-4 opacity-75">Join 15,000+ happy customers who trust us with their homes.</p>
+            <a asp-controller="CustomerService" asp-action="UserServiceList" class="btn btn-warning btn-lg px-5">
+                <i class="fas fa-calendar-check me-2"></i>Book Now
+            </a>
+        </div>
+    </div>
+</section>

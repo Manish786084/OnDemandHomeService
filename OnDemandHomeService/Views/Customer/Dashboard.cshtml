@@ -1,0 +1,317 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Home Services On Demand";
+}
+
+<!-- Page Specific Styles -->
+@section Styles {
+    <style>
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+            margin-top: -80px; /* Offset fixed navbar padding */
+            padding-top: 80px; /* Adjust for content */
+            border-radius: 0 0 50px 0;
+        }
+
+        .hero-shape {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: #fff;
+            clip-path: polygon(0 100%, 100% 0, 100% 100%);
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-search-box {
+            background: #fff;
+            border-radius: 50px;
+            padding: 10px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            display: flex;
+        }
+
+            .hero-search-box input {
+                border: none;
+                padding: 15px 25px;
+                font-size: 1rem;
+                flex-grow: 1;
+            }
+
+                .hero-search-box input:focus {
+                    outline: none;
+                }
+
+            .hero-search-box button {
+                border-radius: 50px;
+                padding: 10px 30px;
+                font-weight: 600;
+            }
+
+        /* Categories */
+        .category-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+            height: 100%;
+        }
+
+            .category-card:hover {
+                transform: translateY(-10px);
+                border-color: var(--primary);
+                box-shadow: 0 15px 30px rgba(78, 115, 223, 0.1);
+            }
+
+        .category-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--light-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: var(--primary);
+            transition: all 0.3s;
+        }
+
+        .category-card:hover .category-icon {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Providers */
+        .provider-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+            .provider-card:hover {
+                transform: scale(1.03);
+            }
+
+        .provider-img {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .rating-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #fff;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        @@media (max-width: 768px) {
+            .hero-content h1
+
+        {
+            font-size: 2rem;
+        }
+
+        .hero-search-box {
+            flex-direction: column;
+            border-radius: 15px;
+        }
+
+            .hero-search-box input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .hero-search-box button {
+                width: 100%;
+            }
+
+        }
+    </style>
+}
+
+<!-- ========================================= -->
+<!-- HERO SECTION -->
+<!-- ========================================= -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1>Home Services <br>At Your Fingertips.</h1>
+                    <p class="lead mb-4">Find trusted professionals for cleaning, plumbing, electrical work, and more.</p>
+
+                    <div class="hero-search-box">
+                        <input type="text" placeholder="What service do you need?">
+                        <button class="btn btn-warning btn-lg"><i class="fas fa-search me-2"></i>Search</button>
+                    </div>
+
+                    <div class="mt-4 d-flex align-items-center">
+                        <span class="me-3 small">Popular:</span>
+                        <span class="badge bg-white text-dark me-2 p-2">Cleaning</span>
+                        <span class="badge bg-white text-dark p-2">Plumbing</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <img src="https://bootstrapmade.com/demo/templates/Logis/assets/img/hero-img.png" class="img-fluid" style="filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));" alt="Service Illustration">
+            </div>
+        </div>
+    </div>
+    <div class="hero-shape"></div>
+</section>
+
+<!-- ========================================= -->
+<!-- CATEGORIES SECTION -->
+<!-- ========================================= -->
+<section id="services" class="py-5 mt-5">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <h2>Explore Our Services</h2>
+            <p class="text-muted mt-3">Select from a wide range of home services</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon"><i class="fas fa-broom"></i></div>
+                    <h6>Cleaning</h6>
+                    <small class="text-muted">120 Pros</small>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon"><i class="fas fa-wrench"></i></div>
+                    <h6>Plumbing</h6>
+                    <small class="text-muted">85 Pros</small>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon"><i class="fas fa-bolt"></i></div>
+                    <h6>Electrician</h6>
+                    <small class="text-muted">92 Pros</small>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon"><i class="fas fa-paint-roller"></i></div>
+                    <h6>Painting</h6>
+                    <small class="text-muted">45 Pros</small>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon"><i class="fas fa-truck-moving"></i></div>
+                    <h6>Moving</h6>
+                    <small class="text-muted">30 Pros</small>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon"><i class="fas fa-air-conditioner"></i></div>
+                    <h6>AC Repair</h6>
+                    <small class="text-muted">55 Pros</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- FEATURED PROVIDERS -->
+<!-- ========================================= -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <h2>Top Rated Professionals</h2>
+        </div>
+
+        <div class="row">
+            <!-- Provider 1 -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card provider-card">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" class="card-img-top provider-img" alt="Provider">
+                        <span class="rating-badge"><i class="fas fa-star text-warning me-1"></i>4.9</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold">David Miller</h6>
+                        <p class="text-muted small mb-1"><i class="fas fa-wrench me-1"></i> Plumber</p>
+                        <p class="text-muted small"><i class="fas fa-map-marker-alt me-1"></i> 2.5 km away</p>
+                        <button class="btn btn-outline-primary w-100">Book Now</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Provider 2 -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card provider-card">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" class="card-img-top provider-img" alt="Provider">
+                        <span class="rating-badge"><i class="fas fa-star text-warning me-1"></i>4.8</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold">Sarah Johnson</h6>
+                        <p class="text-muted small mb-1"><i class="fas fa-broom me-1"></i> Cleaner</p>
+                        <p class="text-muted small"><i class="fas fa-map-marker-alt me-1"></i> 1.2 km away</p>
+                        <button class="btn btn-outline-primary w-100">Book Now</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Provider 3 -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card provider-card">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" class="card-img-top provider-img" alt="Provider">
+                        <span class="rating-badge"><i class="fas fa-star text-warning me-1"></i>4.7</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold">Mike Ross</h6>
+                        <p class="text-muted small mb-1"><i class="fas fa-bolt me-1"></i> Electrician</p>
+                        <p class="text-muted small"><i class="fas fa-map-marker-alt me-1"></i> 3.0 km away</p>
+                        <button class="btn btn-outline-primary w-100">Book Now</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Provider 4 -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card provider-card">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" class="card-img-top provider-img" alt="Provider">
+                        <span class="rating-badge"><i class="fas fa-star text-warning me-1"></i>4.9</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold">Emily Blunt</h6>
+                        <p class="text-muted small mb-1"><i class="fas fa-seedling me-1"></i> Gardener</p>
+                        <p class="text-muted small"><i class="fas fa-map-marker-alt me-1"></i> 4.5 km away</p>
+                        <button class="btn btn-outline-primary w-100">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

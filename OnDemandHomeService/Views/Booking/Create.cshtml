@@ -1,0 +1,425 @@
+﻿@* 
+@model OnDemandHomeService.Models.Service
+@using OnDemandHomeService.Models
+
+<h3 class="text-center">Book Service</h3>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div class="card p-3 shadow">
+
+                <h4>@Model.ServiceName</h4>
+
+                <img src="@(Model.Category?.Icon ?? "/images/no-image.png")"
+                     style="width:200px;height:150px;object-fit:cover" />
+
+                <p>@Model.Description</p>
+                <p>⏱ Duration: @Model.DurationMinutes min</p>
+
+                <h5 class="text-success">₹ @Model.BasePrice</h5>
+
+                <hr />
+
+                <form method="post">
+
+                    <input type="hidden" name="serviceId" value="@Model.ServiceId" />
+
+                    <!-- Date -->
+                    <label>Date:</label>
+                    <input type="date" name="bookingDate" class="form-control mb-2" required />
+
+                    <!-- Address -->
+                    <!-- Address -->
+                    <label>Address:</label>
+
+                    @{
+                        var addresses = ViewBag.Addresses as List<Address>;
+                    }
+
+                    @if (addresses != null && addresses.Any())
+                    {
+                        <select name="addressId" class="form-control mb-2" required>
+                            @foreach (var a in addresses)
+                            {
+                                <option value="@a.AddressId">
+                                    @a.Street, @a.City (@a.Pincode)
+                                </option>
+                            }
+                        </select>
+
+                        <a asp-controller="Booking"
+                           asp-action="AddAddress"
+                           asp-route-serviceId="@Model.ServiceId"
+                           class="btn btn-sm btn-outline-primary mb-3">
+                            + Add New Address
+                        </a>
+
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            No address found. Please add your address first.
+                        </div>
+
+                        <a asp-controller="Booking"
+                           asp-action="AddAddress"
+                           asp-route-serviceId="@Model.ServiceId"
+                           class="btn btn-sm btn-outline-primary mb-3">
+                            + Add New Address
+                        </a>
+
+                    }
+
+
+                    <!-- Time slot -->
+                    <label>Time Slot:</label>
+                    <select name="timeSlotId" class="form-control mb-2" required>
+                        @{
+                            var slots = ViewBag.TimeSlots as List<TimeSlot>;
+                        }
+
+                        @if (slots != null && slots.Any())
+                        {
+                            foreach (var t in slots)
+                            {
+                                <option value="@t.TimeSlotId">
+                                    @t.StartTime - @t.EndTime
+                                </option>
+                            }
+                        }
+                        else
+                        {
+                            <option disabled selected>No slots available</option>
+                        }
+                    </select>
+
+                    <button class="btn btn-primary w-100">
+                        Confirm Booking
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+        <div class="col-2"></div>
+    </div>
+</div> *@
+@model OnDemandHomeService.Models.Service
+@using OnDemandHomeService.Models
+
+@{
+    ViewData["Title"] = "Book Service";
+}
+
+@section Styles {
+    <style>
+        /* Page Background */
+        .booking-page-bg {
+            background: #f8f9fc;
+            min-height: 100vh;
+            padding-top: 120px; /* Space for fixed navbar */
+            padding-bottom: 50px;
+        }
+
+        /* Main Card Container */
+        .booking-card {
+            border: none;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(78, 115, 223, 0.15);
+        }
+
+        /* Left Panel - Service Summary */
+        .service-summary-panel {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: white;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            min-height: 500px;
+        }
+
+            .service-summary-panel::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            }
+
+        .summary-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .price-tag {
+            background: var(--accent); /* Warning Yellow */
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Right Panel - Form */
+        .booking-form-panel {
+            padding: 40px;
+            background: #fff;
+        }
+
+        .form-control-custom {
+            border: 2px solid #e3e6f0;
+            border-radius: 12px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+            .form-control-custom:focus {
+                border-color: #4e73df;
+                box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.15);
+            }
+
+        .form-label-custom {
+            font-weight: 600;
+            color: #3a3b45;
+            margin-bottom: 8px;
+        }
+
+        /* Time Slot Chips */
+        .time-slot-chip {
+            display: inline-block;
+            position: relative;
+            margin: 0 8px 8px 0;
+        }
+
+            .time-slot-chip input[type="radio"] {
+                display: none;
+            }
+
+            .time-slot-chip label {
+                display: block;
+                padding: 10px 20px;
+                background: #f8f9fc;
+                border: 2px solid #e3e6f0;
+                border-radius: 50px;
+                cursor: pointer;
+                font-weight: 600;
+                color: #5a5c69;
+                transition: all 0.3s ease;
+            }
+
+            .time-slot-chip input[type="radio"]:checked + label {
+                background: #4e73df;
+                color: white;
+                border-color: #224abe;
+                box-shadow: 0 5px 15px rgba(78, 115, 223, 0.3);
+            }
+
+            .time-slot-chip label:hover {
+                border-color: #4e73df;
+            }
+
+        /* Animated Submit Button */
+        .btn-book-now {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+            .btn-book-now::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 0%;
+                height: 100%;
+                background: linear-gradient(135deg, #224abe 0%, #1a3a9e 100%);
+                transition: width 0.4s ease;
+                z-index: -1;
+            }
+
+            .btn-book-now:hover::before {
+                width: 100%;
+            }
+
+            .btn-book-now:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(78, 115, 223, 0.4);
+                color: white;
+            }
+
+        /* Mobile Adjustments */
+        @@media (max-width: 767px) {
+            .service-summary-panel {
+                padding: 30px 20px;
+                min-height: auto;
+            }
+
+            .summary-image {
+                height: 150px;
+            }
+
+            .booking-form-panel {
+                padding: 25px;
+            }
+        }
+    </style>
+}
+
+<!-- ========================================= -->
+<!-- BOOKING PAGE LAYOUT -->
+<!-- ========================================= -->
+<div class="booking-page-bg">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+
+                <div class="card booking-card">
+                    <div class="row g-0">
+
+                        <!-- LEFT: Service Summary -->
+                        <div class="col-md-5">
+                            <div class="service-summary-panel text-center">
+                                <img src="@(Model.Category?.Icon ?? "/images/no-image.png")"
+                                     class="summary-img"
+                                     alt="@Model.ServiceName"
+                                     onerror="this.src='https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'">
+
+                                <h3 class="fw-bold mb-2" style="position:relative; z-index:2;">@Model.ServiceName</h3>
+                                <p class="mb-3" style="opacity: 0.9; position:relative; z-index:2;">@Model.Description</p>
+
+                                <div class="d-flex justify-content-center align-items-center mb-4" style="position:relative; z-index:2;">
+                                    <span class="me-3"><i class="fas fa-clock me-1"></i> @Model.DurationMinutes min</span>
+                                </div>
+
+                                <div style="position:relative; z-index:2;">
+                                    <span class="price-tag">₹ @Model.BasePrice</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: Booking Form -->
+                        <div class="col-md-7">
+                            <div class="booking-form-panel">
+                                <h3 class="fw-bold mb-1 text-dark">Schedule Service</h3>
+                                <p class="text-muted mb-4">Pick a date, time, and location.</p>
+
+                                <form method="post">
+                                    <input type="hidden" name="serviceId" value="@Model.ServiceId" />
+
+                                    <!-- Date -->
+                                    <div class="mb-4">
+                                        <label class="form-label-custom"><i class="fas fa-calendar-alt me-2 text-primary"></i>Select Date</label>
+                                        <input type="date"
+                                               name="bookingDate"
+                                               class="form-control form-control-custom"
+                                               min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                               required />
+                                    </div>
+
+                                    <!-- Time Slots -->
+                                    <div class="mb-4">
+                                        <label class="form-label-custom"><i class="fas fa-clock me-2 text-primary"></i>Choose Time Slot</label>
+                                        <div class="d-flex flex-wrap mt-1">
+                                            @{
+                                                var slots = ViewBag.TimeSlots as List<TimeSlot>;
+                                            }
+
+                                            @if (slots != null && slots.Any())
+                                            {
+                                                foreach (var t in slots)
+                                                {
+                                                    <div class="time-slot-chip">
+                                                        <input type="radio"
+                                                               id="slot_@t.TimeSlotId"
+                                                               name="timeSlotId"
+                                                               value="@t.TimeSlotId"
+                                                               required />
+                                                        <label for="slot_@t.TimeSlotId">
+                                                            @t.StartTime.ToString("hh:mm tt") -
+                                                            @t.EndTime.ToString("hh:mm tt")
+                                                        </label>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-warning w-100 py-2 small">No slots available for this date.</div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Address -->
+                                    <div class="mb-4">
+                                        <label class="form-label-custom"><i class="fas fa-map-marker-alt me-2 text-primary"></i>Your Address</label>
+
+                                        @{
+                                            var addresses = ViewBag.Addresses as List<Address>;
+                                        }
+
+                                        @if (addresses != null && addresses.Any())
+                                        {
+                                            <select name="addressId" class="form-control form-control-custom" required>
+                                                @foreach (var a in addresses)
+                                                {
+                                                    <option value="@a.AddressId">
+                                                        @a.Street, @a.City (@a.Pincode)
+                                                    </option>
+                                                }
+                                            </select>
+                                        }
+                                        else
+                                        {
+                                            <div class="alert alert-warning py-2 small">
+                                                <i class="fas fa-exclamation-triangle me-1"></i> No address found. Please add one first.
+                                            </div>
+                                        }
+
+                                        <a asp-controller="Booking"
+                                           asp-action="AddAddress"
+                                           asp-route-serviceId="@Model.ServiceId"
+                                           class="btn btn-sm btn-outline-primary mt-2 w-100 border-2">
+                                            <i class="fas fa-plus me-1"></i> Add New Address
+                                        </a>
+                                    </div>
+
+                                    <!-- Submit -->
+                                    <button type="submit" class="btn btn-book-now w-100 mt-2">
+                                        <i class="fas fa-check-circle me-2"></i>Confirm Booking
+                                    </button>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

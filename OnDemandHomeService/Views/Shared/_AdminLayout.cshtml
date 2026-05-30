@@ -1,0 +1,212 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <!-- 1. Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 2. Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- 3. Custom CSS for Fixed Layout -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* --- SIDEBAR STYLES (Fixed Left) --- */
+        .sidebar {
+            position: fixed; /* Fixes it to the viewport */
+            top: 0;
+            left: 0;
+            height: 100vh; /* Full height */
+            width: 250px; /* Fixed width */
+            background-color: #212529;
+            color: #fff;
+            z-index: 1030; /* Ensures it sits above content */
+            transition: all 0.3s ease;
+            overflow-y: auto; /* Scroll internally if menu is too long */
+        }
+
+        .sidebar .logo-header {
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            text-align: center;
+        }
+
+        .sidebar .nav-item a {
+            color: #adb5bd;
+            padding: 12px 20px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .sidebar .nav-item a:hover,
+        .sidebar .nav-item.active a {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        /* --- MAIN PANEL STYLES --- */
+        .main-panel {
+            margin-left: 250px; /* Push content past the sidebar */
+            width: calc(100% - 250px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- TOP NAVBAR STYLES (Fixed Top within Main Panel) --- */
+        .main-header {
+            position: fixed; /* Fixes the header */
+            top: 0;
+            right: 0;
+            width: calc(100% - 250px); /* Width restricted by sidebar */
+            height: 60px;
+            background-color: #fff;
+            border-bottom: 1px solid #dee2e6;
+            z-index: 1020;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* --- CONTENT WRAPPER (Scrollable Area) --- */
+        .content-wrapper {
+            margin-top: 60px; /* Push content down past the header */
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto; /* Enables vertical scroll */
+            background-color: #f4f6f9;
+        }
+
+        /* Card Styling */
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================= -->
+    <!-- 1. LEFT SIDEBAR (Fixed Position) -->
+    <!-- ========================================= -->
+    <div class="sidebar">
+        <div class="logo-header">
+            <h4 class="text-white mb-0"><i class="fas fa-rocket me-2"></i>AdminPro</h4>
+        </div>
+        <div class="sidebar-wrapper">
+            <ul class="nav flex-column">
+                <li class="nav-item active">
+                    <a href="@Url.Action("Dashboard", "Admin")">
+                        <i class="fas fa-home me-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("ShowProvider", "Provider")">
+                        <i class="fas fa-users me-2"></i> Provider Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("ServiceApprovals", "Admin")">
+                        <i class="fas fa-box me-2"></i> Service Approve
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("ShowCategory", "Category")">
+                        <i class="fas fa-box me-2"></i> Add Category
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("CreateService", "Provider")">
+                        <i class="fas fa-box me-2"></i> Create Services
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("ShowAddService", "Provider")">
+                        <i class="fas fa-box me-2"></i> Show Added Service
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Settings")">
+                        <i class="fas fa-cog me-2"></i> Settings
+                    </a>
+                </li>
+                <li class="nav-item mt-3">
+                    <a href="@Url.Action("Logout", "Auth")" class="text-danger">
+                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- 2. MAIN PANEL (Holds Header & Content) -->
+    <!-- ========================================= -->
+    <div class="main-panel">
+
+        <!-- A. TOP HEADER / NAVBAR (Fixed Position) -->
+        <nav class="main-header">
+            <!-- Left side of Header -->
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link text-dark d-md-none"><i class="fas fa-bars"></i></button>
+                <h5 class="mb-0 fw-bold">Admin Dashboard</h5>
+            </div>
+
+            <!-- Right side of Header (Profile) -->
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff" alt="User" class="rounded-circle me-2" height="35">
+                    <span class="text-dark d-none d-sm-inline">Admin User</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <li><strong class="ms-2 me-2">@Context.Session.GetString("FullName")</strong></li>
+                    <li> <p class="mb-0 ms-2 me-2 text-muted small">@Context.Session.GetString("Email")</p></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" asp-action="Logout" asp-controller="Auth"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- B. CONTENT WRAPPER (Scrollable) -->
+        <div class="content-wrapper">
+            <!-- This is where the specific page content renders -->
+            @RenderBody()
+
+            <!-- C. FOOTER (Inside the scrollable area) -->
+            <footer class="footer mt-auto py-3">
+                <div class="container-fluid">
+                    <div class="row text-muted">
+                        <div class="col-6 text-start">
+                            &copy; @DateTime.Now.Year FixItNow. All rights reserved.
+                        </div>
+                        <div class="col-6 text-end">
+                            Version 1.0.0
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

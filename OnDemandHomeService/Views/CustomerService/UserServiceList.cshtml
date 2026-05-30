@@ -1,0 +1,435 @@
+﻿@* @model List<OnDemandHomeService.Models.Service>
+
+@{
+    Layout = "_Layout"; // Absolute path
+}
+<br />
+<h3 class="mb-4 text-center">Available Service</h3>
+<h4>Total Services: @Model.Count</h4>
+
+<div class="row">
+
+    @foreach (var s in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card shadow service-card h-100">
+
+                <!-- Image -->
+                <img src="@(s.Category?.Icon ?? "/images/no-image.png")"
+                     class="card-img-top"
+                     style="height:180px; object-fit:cover;" />
+
+
+                <div class="card-body text-center">
+
+                    <h5 class="card-title">@s.ServiceName</h5>
+
+                    <p class="text-muted small">
+                        @(
+                                            !string.IsNullOrEmpty(s.Description) && s.Description.Length > 60
+                                            ? s.Description.Substring(0, 60) + "..."
+                                            : s.Description
+                                            )
+                    </p>
+
+                    <!-- Duration -->
+                    <p class="mb-1">
+                        ⏱ Duration:
+                        @(
+                                            s.DurationMinutes >= 60
+                                            ? (s.DurationMinutes / 60) + " hr"
+                                            : s.DurationMinutes + " min"
+                                            )
+                </p>
+
+                    <!-- Price -->
+                    <h6 class="text-success">₹ @s.BasePrice</h6>
+
+                    <a asp-controller="Booking"
+                       asp-action="Create"
+                       asp-route-serviceId="@s.ServiceId"
+                       class="btn btn-primary w-100 mt-2">
+                        Book Now
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        }
+
+</div>
+
+<style>
+    .service-card:hover {
+        transform: scale(1.03);
+        transition: 0.2s;
+        cursor: pointer;
+    }
+</style>
+ *@
+@model List<OnDemandHomeService.Models.Service>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Our Premium Services";
+}
+
+@section Styles {
+    <style>
+        /* Base Theme Variables matching your site */
+        :root {
+            --primary: #4e73df;
+            --primary-dark: #224abe;
+            --accent: #f1c40f; /* Warning yellow */
+            --light-bg: #f8f9fc;
+            --text-dark: #3a3b45;
+        }
+
+        /* Page Header with animated gradient */
+        .services-hero {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            padding: 120px 0 60px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 60px 60px;
+        }
+
+            .services-hero::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+                animation: rotate 20s linear infinite;
+            }
+
+        @@keyframes rotate {
+            from
+
+        {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+
+        }
+
+        /* Filter Buttons */
+        .filter-btn {
+            background: white;
+            border: 2px solid transparent;
+            color: var(--text-dark);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+            .filter-btn:hover, .filter-btn.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary-dark);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(78, 115, 223, 0.3);
+            }
+
+        /* Animated Service Cards */
+        .service-card-animated {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+            .service-card-animated.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .service-card-animated:hover {
+                transform: translateY(-15px) scale(1.02);
+                box-shadow: 0 20px 40px rgba(78, 115, 223, 0.2);
+                z-index: 10;
+            }
+
+        /* Image container */
+        .card-img-wrapper {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+            .card-img-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.8s ease;
+            }
+
+        .service-card-animated:hover .card-img-wrapper img {
+            transform: scale(1.1);
+        }
+
+        /* Gradient overlay on hover */
+        .card-img-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .service-card-animated:hover .card-img-wrapper::after {
+            opacity: 1;
+        }
+
+        /* Price Badge */
+        .price-badge {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: var(--accent);
+            color: var(--text-dark);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .service-card-animated:hover .price-badge {
+            transform: scale(1.1);
+        }
+
+        /* Card Body */
+        .card-body-animated {
+            padding: 25px;
+            position: relative;
+        }
+
+            .card-body-animated h5 {
+                font-weight: 700;
+                color: var(--text-dark);
+                margin-bottom: 10px;
+            }
+
+        /* Animated Book Button */
+        .btn-book {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 0;
+            width: 100%;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+            .btn-book::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 0%;
+                height: 100%;
+                background: linear-gradient(135deg, var(--primary-dark) 0%, #1a3a9e 100%);
+                transition: width 0.4s ease;
+                z-index: -1;
+            }
+
+            .btn-book:hover::before {
+                width: 100%;
+            }
+
+            .btn-book:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(78, 115, 223, 0.4);
+                color: white;
+            }
+
+        /* Shimmer loading effect for images (Optional, nice touch) */
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @@keyframes shimmer {
+            0%
+
+        {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+
+        }
+    </style>
+}
+
+<!-- ========================================= -->
+<!-- SERVICES HERO HEADER -->
+<!-- ========================================= -->
+<section class="services-hero">
+    <div class="container position-relative" style="z-index: 2;">
+        <h1 class="display-4 fw-bold mb-3">Our Premium Services</h1>
+        <p class="lead mb-0">Choose from our wide range of professional home solutions.</p>
+    </div>
+</section>
+
+<!-- ========================================= -->
+<!-- FILTER & GRID SECTION -->
+<!-- ========================================= -->
+<section class="py-5 mt-n5" style="background: var(--light-bg); border-radius: 60px 60px 0 0; position: relative; z-index: 3;">
+    <div class="container">
+
+        <!-- Filter Buttons -->
+        <div class="text-center mb-5" id="filter-buttons">
+            <button class="filter-btn active mx-1 mb-2" data-filter="all">All Services</button>
+            <button class="filter-btn mx-1 mb-2" data-filter="Cleaning">Cleaning</button>
+            <button class="filter-btn mx-1 mb-2" data-filter="Plumbing">Plumbing</button>
+            <button class="filter-btn mx-1 mb-2" data-filter="Electrical">Electrical</button>
+            <button class="filter-btn mx-1 mb-2" data-filter="Painting">Painting</button>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="row g-4" id="services-grid">
+
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var item = Model[i];
+                // Extract category name for filtering, fallback to "Other"
+                var categoryName = item.Category?.CategoryName ?? "Other";
+
+                <div class="col-lg-3 col-md-6 service-item" data-category="@categoryName" style="animation-delay: @(i * 100)ms;">
+
+                    <div class="service-card-animated">
+                        <!-- Image Wrapper -->
+                        <div class="card-img-wrapper">
+                            <img src="@(item.Category?.Icon ?? "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80")"
+                                 alt="@item.ServiceName"
+                                 class="img-fluid"
+                                 onerror="this.src='https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'">
+
+                            <div class="price-badge">
+                                ₹ @item.BasePrice
+                            </div>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="card-body-animated text-center">
+                            <span class="badge bg-primary bg-opacity-10 text-primary mb-2">@categoryName</span>
+                            <h5>@item.ServiceName</h5>
+                            <p class="text-muted small mb-4">Trained & verified professionals at your doorstep.</p>
+
+                            <a asp-controller="Booking"
+                               asp-action="Create"
+                               asp-route-serviceId="@item.ServiceId"
+                               class="btn btn-book">
+                                <i class="fas fa-calendar-check me-2"></i>Book Now
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- Empty State -->
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-tools fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No Services Available Yet</h4>
+                <p class="text-muted">We are adding new services soon!</p>
+            </div>
+        }
+
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // ==========================================
+            // 1. SCROLL REVEAL ANIMATION (Intersection Observer)
+            // ==========================================
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        // Add a staggered delay based on the element's index in the row
+                        setTimeout(() => {
+                            entry.target.classList.add("visible");
+                        }, index * 100);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.service-card-animated').forEach(card => {
+                observer.observe(card);
+            });
+
+
+            // ==========================================
+            // 2. CATEGORY FILTER LOGIC
+            // ==========================================
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const serviceItems = document.querySelectorAll('.service-item');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter');
+
+                    serviceItems.forEach(item => {
+                        const category = item.getAttribute('data-category');
+                        const card = item.querySelector('.service-card-animated');
+
+                        if (filter === 'all' || category === filter) {
+                            item.style.display = 'block';
+                            // Reset animation
+                            card.classList.remove('visible');
+                            setTimeout(() => card.classList.add('visible'), 50);
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+        });
+    </script>
+}
